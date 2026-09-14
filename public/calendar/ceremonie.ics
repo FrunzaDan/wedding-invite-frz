@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Dan & Maria//Wedding Invite//RO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:ceremonie-dan-maria@wedding-invite
+DTSTAMP:20260914T000000Z
+DTSTART;TZID=Europe/Bucharest:20270911T130000
+DTEND;TZID=Europe/Bucharest:20270911T140000
+SUMMARY:Nuntă Dan & Maria - Ceremonie
+DESCRIPTION:Ceremonia religioasă a nunții Dan & Maria.
+LOCATION:Biserica Ursulinelor\, Str. General Magheru 36\, Sibiu
+END:VEVENT
+END:VCALENDAR

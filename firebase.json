@@ -7,6 +7,12 @@
         "source": "**",
         "destination": "/index.html"
       }
+    ],
+    "headers": [
+      {
+        "source": "/calendar/**",
+        "headers": [{ "key": "Content-Type", "value": "text/calendar; charset=utf-8" }]
+      }
     ]
   }
 }

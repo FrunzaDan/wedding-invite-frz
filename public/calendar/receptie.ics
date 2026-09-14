@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Dan & Maria//Wedding Invite//RO
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:receptie-dan-maria@wedding-invite
+DTSTAMP:20260914T000000Z
+DTSTART;TZID=Europe/Bucharest:20270911T150000
+DTEND;TZID=Europe/Bucharest:20270911T230000
+SUMMARY:Nuntă Dan & Maria - Recepție
+DESCRIPTION:Recepția nunții Dan & Maria.
+LOCATION:Ramada Sibiu\, Str. Emil Cioran 2\, Sibiu
+END:VEVENT
+END:VCALENDAR

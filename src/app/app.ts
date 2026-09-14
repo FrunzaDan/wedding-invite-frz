@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, OnDestroy, NgZone } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -35,9 +35,9 @@ export class App implements OnInit, OnDestroy {
   private readonly receptionEndIso = '2027-09-11T23:00:00+03:00';
 
   protected readonly ceremonyGoogleCalendarUrl: string;
-  protected readonly ceremonyIcsUrl: SafeUrl;
+  protected readonly ceremonyIcsUrl = '/calendar/ceremonie.ics';
   protected readonly receptionGoogleCalendarUrl: string;
-  protected readonly receptionIcsUrl: SafeUrl;
+  protected readonly receptionIcsUrl = '/calendar/receptie.ics';
   protected readonly ceremonyMapEmbed: SafeResourceUrl;
   protected readonly receptionMapEmbed: SafeResourceUrl;
 
@@ -63,16 +63,6 @@ export class App implements OnInit, OnDestroy {
       ceremonyLocationStr,
       ceremonyDetails,
     );
-    this.ceremonyIcsUrl = this.buildIcsDataUrl([
-      {
-        uid: 'ceremonie-dan-maria@wedding-invite',
-        title: ceremonyTitle,
-        startIso: this.ceremonyStartIso,
-        endIso: this.ceremonyEndIso,
-        location: ceremonyLocationStr,
-        details: ceremonyDetails,
-      },
-    ]);
 
     this.receptionGoogleCalendarUrl = this.buildGoogleCalendarUrl(
       receptionTitle,
@@ -80,16 +70,6 @@ export class App implements OnInit, OnDestroy {
       receptionLocationStr,
       receptionDetails,
     );
-    this.receptionIcsUrl = this.buildIcsDataUrl([
-      {
-        uid: 'receptie-dan-maria@wedding-invite',
-        title: receptionTitle,
-        startIso: this.receptionStartIso,
-        endIso: this.receptionEndIso,
-        location: receptionLocationStr,
-        details: receptionDetails,
-      },
-    ]);
 
     this.ceremonyMapEmbed = this.buildMapEmbed(this.ceremonyStreet, this.ceremonyLocation);
     this.receptionMapEmbed = this.buildMapEmbed(
@@ -129,11 +109,6 @@ export class App implements OnInit, OnDestroy {
     );
   }
 
-  private formatIcsDate(iso: string): string {
-    const [datePart, timePart] = iso.split('T');
-    return datePart.replace(/-/g, '') + 'T' + timePart.slice(0, 8).replace(/:/g, '');
-  }
-
   private formatGoogleDate(iso: string): string {
     const utcIso = new Date(iso).toISOString();
     return utcIso.replace(/[-:]/g, '').split('.')[0] + 'Z';
@@ -157,45 +132,5 @@ export class App implements OnInit, OnDestroy {
       location,
     });
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
-  }
-
-  private buildIcsDataUrl(
-    events: Array<{
-      uid: string;
-      title: string;
-      startIso: string;
-      endIso: string;
-      location: string;
-      details: string;
-    }>,
-  ): SafeUrl {
-    const dtstamp = this.formatGoogleDate(new Date().toISOString());
-    const lines = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//Dan & Maria//Wedding Invite//RO',
-      'CALSCALE:GREGORIAN',
-      'METHOD:PUBLISH',
-    ];
-
-    for (const event of events) {
-      lines.push(
-        'BEGIN:VEVENT',
-        `UID:${event.uid}`,
-        `DTSTAMP:${dtstamp}`,
-        `DTSTART;TZID=Europe/Bucharest:${this.formatIcsDate(event.startIso)}`,
-        `DTEND;TZID=Europe/Bucharest:${this.formatIcsDate(event.endIso)}`,
-        `SUMMARY:${event.title}`,
-        `DESCRIPTION:${event.details}`,
-        `LOCATION:${event.location}`,
-        'END:VEVENT',
-      );
-    }
-
-    lines.push('END:VCALENDAR');
-    const ics = lines.join('\r\n');
-    return this.sanitizer.bypassSecurityTrustUrl(
-      'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics),
-    );
   }
 }
