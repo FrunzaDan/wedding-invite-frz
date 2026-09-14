@@ -1,59 +1,54 @@
-# WeddingInvite
+# Wedding Invite
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
+A single-page wedding invitation for Dan & Maria, built with Angular. It's a small app on purpose — one component, no backend — but it packs in the stuff you'd actually want for a wedding site: a live countdown, venue details with embedded maps, one-tap "add to calendar" for the ceremony and reception, and quick ways to RSVP by phone or WhatsApp.
 
-## Development server
+## What it does
 
-To start a local development server, run:
+- **Countdown** to the wedding date, refreshed every minute (days + hours remaining).
+- **Ceremony & reception details** — time, venue, address — each with an embedded Google Maps view and a link to open the full map.
+- **Add to calendar**, one button per platform, for both events:
+  - **Google** — opens `calendar.google.com` with the event prefilled.
+  - **Samsung** — fires an Android intent URL straight into the Calendar Provider's "insert event" flow, so it opens the native "new event" screen instead of downloading a file.
+  - **Apple** — links to a static `.ics` file (also the fallback for the Samsung button if the intent can't be resolved).
+- **RSVP** — tap-to-call and WhatsApp links for both Dan and Maria.
 
-```bash
-ng serve
-```
+Everything is in Romanian, hardcoded for this specific wedding — dates, names, venues, and phone numbers live as component fields in `src/app/app.ts`, not in a CMS or config file. If you're forking this for your own wedding, that's the file to edit.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Stack
 
-## Code scaffolding
+- **Angular 22** (standalone components, no NgModules) — the whole UI is one component: `app.ts` / `app.html` / `app.css`.
+- **Vitest** for unit tests, via Angular's native `@angular/build:unit-test` builder (not Karma/Jasmine).
+- **Firebase Hosting** for deployment — see `firebase.json`.
+- Plain CSS, no UI framework or component library.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## A couple of things worth knowing before you touch this
 
-```bash
-ng generate component component-name
-```
+- **The `.ics` files in `public/calendar/` are static and hand-written**, not generated at build time. If you change an event's date/time in `app.ts`, you also need to update the matching `.ics` file, or the Apple/Samsung-fallback buttons will silently disagree with the Google Calendar button.
+- Firebase Hosting is configured to serve `/calendar/**` with `Content-Type: text/calendar; charset=utf-8` (see `firebase.json`) — without that header, some devices treat the download as a generic file and won't offer to open it as a calendar event.
+- The Samsung Calendar button uses an `intent://` URL rather than a plain link. Chrome/Samsung Internet on Android parse that scheme specially to launch a native app intent; it does nothing useful on desktop or iOS, which is why it's Android-only by design. If you ever touch `buildSamsungCalendarUrl` in `app.ts`, be careful with the MIME type / data URI — it needs to target the calendar _events collection_ (`content://com.android.calendar/events`) for `ACTION_INSERT`, not a single-event view type, or every Android calendar app will fail to open it with an "Unable to launch event" error.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Getting started
 
 ```bash
-ng test
+npm install
+npm start        # ng serve — http://localhost:4200
 ```
 
-## Running end-to-end tests
+The dev server live-reloads on changes to anything in `src/`.
 
-For end-to-end (e2e) testing, run:
+## Testing
 
 ```bash
-ng e2e
+npm test          # ng test — runs the Vitest suite once
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+The suite (`src/app/app.spec.ts`) covers the countdown logic (including edge cases at the exact wedding moment and long after), the calendar link builders for all three platforms, and the rendered template (maps, phone numbers, RSVP text, etc.).
 
-## Additional Resources
+## Building & deploying
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+npm run build      # outputs to dist/wedding-invite/browser
+firebase deploy    # ships that build to Firebase Hosting
+```
+
+`ng build` alone won't deploy anything — you need the Firebase CLI configured against the project in `.firebaserc` and to run `firebase deploy` yourself (or however your deploy process is wired up).
