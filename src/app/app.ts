@@ -36,8 +36,10 @@ export class App implements OnInit, OnDestroy {
 
   protected readonly ceremonyGoogleCalendarUrl: string;
   protected readonly ceremonyIcsUrl = '/calendar/ceremonie.ics';
+  protected readonly ceremonySamsungCalendarUrl: string;
   protected readonly receptionGoogleCalendarUrl: string;
   protected readonly receptionIcsUrl = '/calendar/receptie.ics';
+  protected readonly receptionSamsungCalendarUrl: string;
   protected readonly ceremonyMapEmbed: SafeResourceUrl;
   protected readonly receptionMapEmbed: SafeResourceUrl;
 
@@ -69,6 +71,24 @@ export class App implements OnInit, OnDestroy {
       this.timedGoogleDates(this.receptionStartIso, this.receptionEndIso),
       receptionLocationStr,
       receptionDetails,
+    );
+
+    this.ceremonySamsungCalendarUrl = this.buildSamsungCalendarUrl(
+      ceremonyTitle,
+      ceremonyLocationStr,
+      ceremonyDetails,
+      this.ceremonyStartIso,
+      this.ceremonyEndIso,
+      this.ceremonyIcsUrl,
+    );
+
+    this.receptionSamsungCalendarUrl = this.buildSamsungCalendarUrl(
+      receptionTitle,
+      receptionLocationStr,
+      receptionDetails,
+      this.receptionStartIso,
+      this.receptionEndIso,
+      this.receptionIcsUrl,
     );
 
     this.ceremonyMapEmbed = this.buildMapEmbed(this.ceremonyStreet, this.ceremonyLocation);
@@ -116,6 +136,33 @@ export class App implements OnInit, OnDestroy {
 
   private timedGoogleDates(startIso: string, endIso: string): string {
     return `${this.formatGoogleDate(startIso)}/${this.formatGoogleDate(endIso)}`;
+  }
+
+  private buildSamsungCalendarUrl(
+    title: string,
+    venueLocation: string,
+    details: string,
+    startIso: string,
+    endIso: string,
+    fallbackIcsUrl: string,
+  ): string {
+    const beginTime = new Date(startIso).getTime();
+    const endTime = new Date(endIso).getTime();
+    const fallbackUrl = encodeURIComponent(`${window.location.origin}${fallbackIcsUrl}`);
+
+    return (
+      'intent://com.android.calendar/events#Intent;' +
+      'scheme=content;' +
+      'action=android.intent.action.INSERT;' +
+      `S.title=${encodeURIComponent(title)};` +
+      `S.eventLocation=${encodeURIComponent(venueLocation)};` +
+      `S.description=${encodeURIComponent(details)};` +
+      `l.beginTime=${beginTime};` +
+      `l.endTime=${endTime};` +
+      'package=com.samsung.android.calendar;' +
+      `S.browser_fallback_url=${fallbackUrl};` +
+      'end'
+    );
   }
 
   private buildGoogleCalendarUrl(

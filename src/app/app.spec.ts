@@ -68,6 +68,33 @@ describe('App', () => {
 
       expect(component['countdown']).toEqual({ days: 10, hours: 0 });
     });
+
+    it('shows zero days and hours at the exact moment the wedding starts', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2027-09-11T00:00:00+03:00'));
+
+      fixture.detectChanges();
+
+      expect(component['countdown']).toEqual({ days: 0, hours: 0 });
+    });
+
+    it('floors partial hours instead of rounding when less than an hour remains', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2027-09-10T23:30:00+03:00'));
+
+      fixture.detectChanges();
+
+      expect(component['countdown']).toEqual({ days: 0, hours: 0 });
+    });
+
+    it('never reports a negative countdown long after the wedding has passed', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2028-01-01T00:00:00+03:00'));
+
+      fixture.detectChanges();
+
+      expect(component['countdown']).toEqual({ days: 0, hours: 0 });
+    });
   });
 
   describe('calendar links', () => {
@@ -96,6 +123,62 @@ describe('App', () => {
       expect(url.searchParams.get('dates')).toBe('20270911T120000Z/20270911T200000Z');
       expect(url.searchParams.get('location')).toBe('Ramada Sibiu, Str. Emil Cioran 2, Sibiu');
       expect(url.searchParams.get('details')).toBe('Recepția nunții Dan & Maria.');
+    });
+
+    it('builds a Samsung Calendar intent link for the ceremony with the correct epoch times and details', () => {
+      const href = component['ceremonySamsungCalendarUrl'];
+
+      expect(href).toContain(`S.title=${encodeURIComponent('Nuntă Dan & Maria - Ceremonie')}`);
+      expect(href).toContain(
+        `S.eventLocation=${encodeURIComponent('Biserica Ursulinelor, Str. General Magheru 36, Sibiu')}`,
+      );
+      expect(href).toContain(
+        `S.description=${encodeURIComponent('Ceremonia religioasă a nunții Dan & Maria.')}`,
+      );
+      expect(href).toContain(`l.beginTime=${new Date('2027-09-11T13:00:00+03:00').getTime()}`);
+      expect(href).toContain(`l.endTime=${new Date('2027-09-11T14:00:00+03:00').getTime()}`);
+    });
+
+    it('builds a Samsung Calendar intent link for the reception with the correct epoch times and details', () => {
+      const href = component['receptionSamsungCalendarUrl'];
+
+      expect(href).toContain(`S.title=${encodeURIComponent('Nuntă Dan & Maria - Recepție')}`);
+      expect(href).toContain(`l.beginTime=${new Date('2027-09-11T15:00:00+03:00').getTime()}`);
+      expect(href).toContain(`l.endTime=${new Date('2027-09-11T23:00:00+03:00').getTime()}`);
+    });
+
+    it('targets the Android Calendar Provider "insert new event" data URI, not a single-event view', () => {
+      const ceremonyHref = component['ceremonySamsungCalendarUrl'];
+      const receptionHref = component['receptionSamsungCalendarUrl'];
+
+      for (const href of [ceremonyHref, receptionHref]) {
+        expect(href).toContain('intent://com.android.calendar/events#Intent;');
+        expect(href).toContain('scheme=content;');
+        expect(href).toContain('action=android.intent.action.INSERT;');
+        expect(href).toContain('package=com.samsung.android.calendar;');
+        expect(href.endsWith(';end')).toBe(true);
+        // Regression guard: this MIME type addresses a single *existing* event
+        // (ACTION_VIEW/ACTION_EDIT) and breaks ACTION_INSERT if reintroduced.
+        expect(href).not.toContain('vnd.android.cursor.item/event');
+      }
+    });
+
+    it('falls back to the same-origin .ics file under the current page origin if no calendar app resolves the intent', () => {
+      const ceremonyHref = component['ceremonySamsungCalendarUrl'];
+      const receptionHref = component['receptionSamsungCalendarUrl'];
+
+      expect(ceremonyHref).toContain(
+        `S.browser_fallback_url=${encodeURIComponent(`${window.location.origin}/calendar/ceremonie.ics`)}`,
+      );
+      expect(receptionHref).toContain(
+        `S.browser_fallback_url=${encodeURIComponent(`${window.location.origin}/calendar/receptie.ics`)}`,
+      );
+    });
+
+    it('gives each event a distinct Samsung Calendar link', () => {
+      expect(component['ceremonySamsungCalendarUrl']).not.toBe(
+        component['receptionSamsungCalendarUrl'],
+      );
     });
   });
 
@@ -180,6 +263,90 @@ describe('App', () => {
         expect(link.getAttribute('href')).toContain('https://calendar.google.com/calendar/render');
         expect(link.getAttribute('target')).toBe('_blank');
       }
+    });
+
+    it('renders a Samsung Calendar link for each event as an Android intent with an .ics fallback', () => {
+      const compiled: HTMLElement = fixture.nativeElement;
+      const samsungLinks = Array.from(
+        compiled.querySelectorAll('a.calendar-button.samsung'),
+      ) as HTMLAnchorElement[];
+
+      expect(samsungLinks).toHaveLength(2);
+      for (const link of samsungLinks) {
+        const href = link.getAttribute('href') ?? '';
+        expect(
+          href.startsWith('intent://com.android.calendar/events#Intent;scheme=content;'),
+        ).toBe(true);
+        expect(href).toContain('package=com.samsung.android.calendar');
+        expect(link.getAttribute('target')).toBeNull();
+      }
+
+      expect(samsungLinks[0].getAttribute('href')).toContain(
+        encodeURIComponent('/calendar/ceremonie.ics'),
+      );
+      expect(samsungLinks[1].getAttribute('href')).toContain(
+        encodeURIComponent('/calendar/receptie.ics'),
+      );
+    });
+
+    it('renders the hero image with a descriptive alt text', () => {
+      const compiled: HTMLElement = fixture.nativeElement;
+      const img = compiled.querySelector('.image-wrap img') as HTMLImageElement | null;
+
+      expect(img).not.toBeNull();
+      expect(img?.getAttribute('src')).toBe(component['imagePath']);
+      expect(img?.getAttribute('alt')).toBeTruthy();
+    });
+
+    it('renders "Open in Maps" links to the ceremony and reception map URLs in a new tab', () => {
+      const compiled: HTMLElement = fixture.nativeElement;
+      const mapLinks = Array.from(compiled.querySelectorAll('a.map-link')) as HTMLAnchorElement[];
+
+      expect(mapLinks.map((link) => link.getAttribute('href'))).toEqual([
+        component['ceremonyMap'],
+        component['receptionMap'],
+      ]);
+      for (const link of mapLinks) {
+        expect(link.getAttribute('target')).toBe('_blank');
+        expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+      }
+    });
+
+    it('renders the sanitized map embed URLs on the ceremony and reception iframes', () => {
+      const compiled: HTMLElement = fixture.nativeElement;
+      const iframes = Array.from(compiled.querySelectorAll('.map-frame iframe')) as HTMLIFrameElement[];
+
+      expect(iframes).toHaveLength(2);
+      expect(iframes[0].getAttribute('src')).toContain(
+        encodeURIComponent('Str. General Magheru 36 Sibiu'),
+      );
+      expect(iframes[1].getAttribute('src')).toContain(
+        encodeURIComponent('Ramada Sibiu Str. Emil Cioran 2 Sibiu'),
+      );
+    });
+
+    it('displays each phone number next to its call and WhatsApp buttons', () => {
+      const compiled: HTMLElement = fixture.nativeElement;
+
+      const danNumbers = compiled.querySelectorAll('.dan .phone-number');
+      const mariaNumbers = compiled.querySelectorAll('.maria .phone-number');
+
+      expect(danNumbers).toHaveLength(2); // call button + WhatsApp button
+      expect(mariaNumbers).toHaveLength(2);
+      for (const el of Array.from(danNumbers)) {
+        expect(el.textContent).toBe(component['danPhone']);
+      }
+      for (const el of Array.from(mariaNumbers)) {
+        expect(el.textContent).toBe(component['mariaPhone']);
+      }
+    });
+
+    it('renders the RSVP message and deadline', () => {
+      const compiled: HTMLElement = fixture.nativeElement;
+      const rsvpBox = compiled.querySelector('.rsvp-box');
+
+      expect(rsvpBox?.textContent).toContain(component['rsvp']);
+      expect(rsvpBox?.textContent).toContain(component['rsvpDeadline']);
     });
   });
 });
