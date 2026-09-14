@@ -1,11 +1,13 @@
 <main class="page-shell">
   <section class="invite-card">
-    <p class="eyebrow">Sunteți invitați călduros la nunta</p>
-    <h1>{{ couple }}</h1>
+    <p class="eyebrow">Sunteți invitați călduros la nunta noastră</p>
+    <h1>Dan & Maria</h1>
 
     <div class="parents-names">
-      <p class="parent-line">Fiul {{ danParents }}</p>
-      <p class="parent-line">Fiica {{ mariaParents }}</p>
+      <p class="parent-line">Alături de părinții</p>
+      <p class="parent-line">Adelina & Mircea-Dan Frunză</p>
+      <p class="parent-line">și</p>
+      <p class="parent-line">Luminița & Nelu Solomon</p>
     </div>
 
     <div class="image-wrap" aria-label="Invitation photo of a cat holding a wedding invitation">
@@ -44,6 +46,21 @@
             title="Map to Biserica Ursulinelor"
           ></iframe>
         </div>
+        <div class="calendar-buttons">
+          <a
+            [href]="ceremonyGoogleCalendarUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="calendar-button google"
+          >
+            <span class="calendar-icon">📅</span>
+            <span>Google Calendar</span>
+          </a>
+          <a [href]="ceremonyIcsUrl" class="calendar-button apple">
+            <span class="calendar-icon">🍎</span>
+            <span>Apple Calendar</span>
+          </a>
+        </div>
       </div>
 
       <div class="time-block">
@@ -60,6 +77,21 @@
             allowfullscreen
             title="Map to Ramada Sibiu"
           ></iframe>
+        </div>
+        <div class="calendar-buttons">
+          <a
+            [href]="receptionGoogleCalendarUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="calendar-button google"
+          >
+            <span class="calendar-icon">📅</span>
+            <span>Google Calendar</span>
+          </a>
+          <a [href]="receptionIcsUrl" class="calendar-button apple">
+            <span class="calendar-icon">🍎</span>
+            <span>Apple Calendar</span>
+          </a>
         </div>
       </div>
     </div>

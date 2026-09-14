@@ -258,6 +258,44 @@ h1 {
   border: 0;
 }
 
+.calendar-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.calendar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px 8px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #2c1d1e;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1.5px solid rgba(120, 80, 86, 0.25);
+  box-shadow: 0 4px 12px rgba(70, 41, 43, 0.05);
+  transition: all 0.3s ease;
+}
+
+.calendar-button:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(120, 80, 86, 0.4);
+  box-shadow: 0 8px 18px rgba(70, 41, 43, 0.1);
+  transform: translateY(-2px);
+}
+
+.calendar-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
 .divider {
   width: 140px;
   height: 2px;
@@ -341,28 +379,43 @@ h1 {
   font-size: 0.95rem;
 }
 
-.phone-buttons {
+.phone-buttons,
+.whatsapp-buttons {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+  width: 100%;
 }
 
-.phone-button {
+.phone-button,
+.whatsapp-button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 16px 48px;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1.5px solid rgba(120, 80, 86, 0.25);
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 16px;
   border-radius: 16px;
   text-decoration: none;
   color: #2c1d1e;
   font-weight: 600;
   font-size: 0.9rem;
   transition: all 0.3s ease;
+}
+
+.phone-button {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1.5px solid rgba(120, 80, 86, 0.25);
   box-shadow: 0 4px 12px rgba(70, 41, 43, 0.05);
+}
+
+.whatsapp-button {
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(37, 211, 102, 0.04));
+  border: 1.5px solid rgba(37, 211, 102, 0.25);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.05);
 }
 
 .phone-button:hover {
@@ -393,30 +446,6 @@ h1 {
   text-transform: uppercase;
   font-weight: 500;
   opacity: 0.85;
-}
-
-.whatsapp-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-.whatsapp-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 16px 48px;
-  background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(37, 211, 102, 0.04));
-  border: 1.5px solid rgba(37, 211, 102, 0.25);
-  border-radius: 16px;
-  text-decoration: none;
-  color: #2c1d1e;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.05);
 }
 
 .whatsapp-button:hover {
