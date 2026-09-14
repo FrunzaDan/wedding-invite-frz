@@ -144,11 +144,19 @@ h1 {
 }
 
 .countdown {
+  margin-top: 28px;
+  margin-bottom: 32px;
+}
+
+.countdown-heading {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.countdown-items {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  margin-top: 28px;
-  margin-bottom: 32px;
 }
 
 .countdown-item {
@@ -223,7 +231,7 @@ h1 {
   opacity: 0.9;
 }
 
-.time-block a {
+.map-link {
   display: inline-block;
   margin-top: 14px;
   color: #7a4d52;
@@ -235,7 +243,7 @@ h1 {
   transition: all 0.3s ease;
 }
 
-.time-block a:hover {
+.map-link:hover {
   color: #4d2f33;
   border-bottom-color: rgba(122, 77, 82, 0.8);
 }
@@ -438,16 +446,6 @@ h1 {
   opacity: 0.85;
 }
 
-.whatsapp-label {
-  margin: 20px 0 16px;
-  font-size: 0.9rem;
-  color: #8b7274;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  font-weight: 500;
-  opacity: 0.85;
-}
-
 .whatsapp-button:hover {
   background: linear-gradient(135deg, rgba(37, 211, 102, 0.15), rgba(37, 211, 102, 0.08));
   border-color: rgba(37, 211, 102, 0.4);
@@ -470,8 +468,7 @@ h1 {
     gap: 18px;
   }
 
-  .countdown {
-    grid-template-columns: repeat(2, 1fr);
+  .countdown-items {
     gap: 10px;
   }
 
@@ -488,6 +485,10 @@ h1 {
   }
 
   .whatsapp-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-buttons {
     grid-template-columns: 1fr;
   }
 }

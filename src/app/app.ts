@@ -38,11 +38,15 @@ export class App implements OnInit, OnDestroy {
   protected readonly ceremonyIcsUrl: SafeUrl;
   protected readonly receptionGoogleCalendarUrl: string;
   protected readonly receptionIcsUrl: SafeUrl;
+  protected readonly ceremonyMapEmbed: SafeResourceUrl;
+  protected readonly receptionMapEmbed: SafeResourceUrl;
 
   protected countdown = {
     days: 0,
     hours: 0,
   };
+
+  private countdownIntervalId?: ReturnType<typeof setInterval>;
 
   constructor() {
     const ceremonyTitle = 'Nuntă Dan & Maria - Ceremonie';
@@ -55,44 +59,56 @@ export class App implements OnInit, OnDestroy {
 
     this.ceremonyGoogleCalendarUrl = this.buildGoogleCalendarUrl(
       ceremonyTitle,
-      this.ceremonyStartIso,
-      this.ceremonyEndIso,
+      this.timedGoogleDates(this.ceremonyStartIso, this.ceremonyEndIso),
       ceremonyLocationStr,
       ceremonyDetails,
     );
-    this.ceremonyIcsUrl = this.buildIcsDataUrl(
-      'ceremonie-dan-maria@wedding-invite',
-      ceremonyTitle,
-      this.ceremonyStartIso,
-      this.ceremonyEndIso,
-      ceremonyLocationStr,
-      ceremonyDetails,
-    );
+    this.ceremonyIcsUrl = this.buildIcsDataUrl([
+      {
+        uid: 'ceremonie-dan-maria@wedding-invite',
+        title: ceremonyTitle,
+        startIso: this.ceremonyStartIso,
+        endIso: this.ceremonyEndIso,
+        location: ceremonyLocationStr,
+        details: ceremonyDetails,
+      },
+    ]);
+
     this.receptionGoogleCalendarUrl = this.buildGoogleCalendarUrl(
       receptionTitle,
-      this.receptionStartIso,
-      this.receptionEndIso,
+      this.timedGoogleDates(this.receptionStartIso, this.receptionEndIso),
       receptionLocationStr,
       receptionDetails,
     );
-    this.receptionIcsUrl = this.buildIcsDataUrl(
-      'receptie-dan-maria@wedding-invite',
-      receptionTitle,
-      this.receptionStartIso,
-      this.receptionEndIso,
-      receptionLocationStr,
-      receptionDetails,
+    this.receptionIcsUrl = this.buildIcsDataUrl([
+      {
+        uid: 'receptie-dan-maria@wedding-invite',
+        title: receptionTitle,
+        startIso: this.receptionStartIso,
+        endIso: this.receptionEndIso,
+        location: receptionLocationStr,
+        details: receptionDetails,
+      },
+    ]);
+
+    this.ceremonyMapEmbed = this.buildMapEmbed(this.ceremonyStreet, this.ceremonyLocation);
+    this.receptionMapEmbed = this.buildMapEmbed(
+      `${this.receptionVenue} ${this.receptionStreet}`,
+      this.receptionLocation,
     );
   }
 
   ngOnInit(): void {
     this.updateCountdown();
+    this.countdownIntervalId = setInterval(() => this.updateCountdown(), 60_000);
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    clearInterval(this.countdownIntervalId);
+  }
 
   private updateCountdown(): void {
-    const weddingDate = new Date('2027-09-11T00:00:00').getTime();
+    const weddingDate = new Date('2027-09-11T00:00:00+03:00').getTime();
     const now = new Date().getTime();
     const diff = weddingDate - now;
 
@@ -106,15 +122,10 @@ export class App implements OnInit, OnDestroy {
     }
   }
 
-  protected getCeremonyMapEmbed(): SafeResourceUrl {
+  private buildMapEmbed(street: string, location: string): SafeResourceUrl {
+    const query = encodeURIComponent(`${street} ${location}`);
     return this.sanitizer.bypassSecurityTrustResourceUrl(
-      'https://www.google.com/maps?q=Strada%20General%20Magheru%2036%20Sibiu&output=embed',
-    );
-  }
-
-  protected getReceptionMapEmbed(): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(
-      'https://www.google.com/maps?q=Ramada%20Sibiu%20Strada%20Emil%20Cioran%202%20Sibiu&output=embed',
+      `https://www.google.com/maps?q=${query}&output=embed`,
     );
   }
 
@@ -128,17 +139,20 @@ export class App implements OnInit, OnDestroy {
     return utcIso.replace(/[-:]/g, '').split('.')[0] + 'Z';
   }
 
+  private timedGoogleDates(startIso: string, endIso: string): string {
+    return `${this.formatGoogleDate(startIso)}/${this.formatGoogleDate(endIso)}`;
+  }
+
   private buildGoogleCalendarUrl(
     title: string,
-    startIso: string,
-    endIso: string,
+    dates: string,
     location: string,
     details: string,
   ): string {
     const params = new URLSearchParams({
       action: 'TEMPLATE',
       text: title,
-      dates: `${this.formatGoogleDate(startIso)}/${this.formatGoogleDate(endIso)}`,
+      dates,
       details,
       location,
     });
@@ -146,30 +160,39 @@ export class App implements OnInit, OnDestroy {
   }
 
   private buildIcsDataUrl(
-    uid: string,
-    title: string,
-    startIso: string,
-    endIso: string,
-    location: string,
-    details: string,
+    events: Array<{
+      uid: string;
+      title: string;
+      startIso: string;
+      endIso: string;
+      location: string;
+      details: string;
+    }>,
   ): SafeUrl {
+    const dtstamp = this.formatGoogleDate(new Date().toISOString());
     const lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
       'PRODID:-//Dan & Maria//Wedding Invite//RO',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
-      'BEGIN:VEVENT',
-      `UID:${uid}`,
-      `DTSTAMP:${this.formatGoogleDate(new Date().toISOString())}`,
-      `DTSTART;TZID=Europe/Bucharest:${this.formatIcsDate(startIso)}`,
-      `DTEND;TZID=Europe/Bucharest:${this.formatIcsDate(endIso)}`,
-      `SUMMARY:${title}`,
-      `DESCRIPTION:${details}`,
-      `LOCATION:${location}`,
-      'END:VEVENT',
-      'END:VCALENDAR',
     ];
+
+    for (const event of events) {
+      lines.push(
+        'BEGIN:VEVENT',
+        `UID:${event.uid}`,
+        `DTSTAMP:${dtstamp}`,
+        `DTSTART;TZID=Europe/Bucharest:${this.formatIcsDate(event.startIso)}`,
+        `DTEND;TZID=Europe/Bucharest:${this.formatIcsDate(event.endIso)}`,
+        `SUMMARY:${event.title}`,
+        `DESCRIPTION:${event.details}`,
+        `LOCATION:${event.location}`,
+        'END:VEVENT',
+      );
+    }
+
+    lines.push('END:VCALENDAR');
     const ics = lines.join('\r\n');
     return this.sanitizer.bypassSecurityTrustUrl(
       'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics),

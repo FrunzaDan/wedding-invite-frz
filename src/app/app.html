@@ -10,8 +10,8 @@
       <p class="parent-line">Luminița & Nelu Solomon</p>
     </div>
 
-    <div class="image-wrap" aria-label="Invitation photo of a cat holding a wedding invitation">
-      <img [src]="imagePath" alt="Cat holding a wedding invitation" />
+    <div class="image-wrap">
+      <img [src]="imagePath" alt="Pisică ținând o invitație de nuntă" />
     </div>
 
     <div class="date-block">
@@ -20,13 +20,16 @@
     </div>
 
     <div class="countdown">
-      <div class="countdown-item">
-        <span class="countdown-value">{{ countdown.days }}</span>
-        <span class="countdown-label">Zile</span>
-      </div>
-      <div class="countdown-item">
-        <span class="countdown-value">{{ countdown.hours }}</span>
-        <span class="countdown-label">Ore</span>
+      <span class="label countdown-heading">Au mai rămas</span>
+      <div class="countdown-items">
+        <div class="countdown-item">
+          <span class="countdown-value">{{ countdown.days }}</span>
+          <span class="countdown-label">Zile</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-value">{{ countdown.hours }}</span>
+          <span class="countdown-label">Ore</span>
+        </div>
       </div>
     </div>
 
@@ -39,13 +42,18 @@
         <small>{{ ceremonyLocation }}</small>
         <div class="map-frame">
           <iframe
-            [src]="getCeremonyMapEmbed()"
+            [src]="ceremonyMapEmbed"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
             allowfullscreen
-            title="Map to Biserica Ursulinelor"
+            title="Hartă către Biserica Ursulinelor"
           ></iframe>
         </div>
+        <a [href]="ceremonyMap" target="_blank" rel="noopener noreferrer" class="map-link">
+          Deschide în Hărți
+        </a>
+        <div class="divider-small"></div>
+        <span class="map-link">Adaugă în calendar</span>
         <div class="calendar-buttons">
           <a
             [href]="ceremonyGoogleCalendarUrl"
@@ -53,11 +61,11 @@
             rel="noopener noreferrer"
             class="calendar-button google"
           >
-            <span class="calendar-icon">📅</span>
+            <span class="calendar-icon" aria-hidden="true">📅</span>
             <span>Google Calendar</span>
           </a>
           <a [href]="ceremonyIcsUrl" class="calendar-button apple">
-            <span class="calendar-icon">🍎</span>
+            <span class="calendar-icon" aria-hidden="true">🍎</span>
             <span>Apple Calendar</span>
           </a>
         </div>
@@ -71,13 +79,18 @@
         <small>{{ receptionLocation }}</small>
         <div class="map-frame">
           <iframe
-            [src]="getReceptionMapEmbed()"
+            [src]="receptionMapEmbed"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
             allowfullscreen
-            title="Map to Ramada Sibiu"
+            title="Hartă către Ramada Sibiu"
           ></iframe>
         </div>
+        <a [href]="receptionMap" target="_blank" rel="noopener noreferrer" class="map-link">
+          Deschide în Hărți
+        </a>
+        <div class="divider-small"></div>
+        <span class="map-link">Adaugă în calendar</span>
         <div class="calendar-buttons">
           <a
             [href]="receptionGoogleCalendarUrl"
@@ -85,11 +98,11 @@
             rel="noopener noreferrer"
             class="calendar-button google"
           >
-            <span class="calendar-icon">📅</span>
+            <span class="calendar-icon" aria-hidden="true">📅</span>
             <span>Google Calendar</span>
           </a>
           <a [href]="receptionIcsUrl" class="calendar-button apple">
-            <span class="calendar-icon">🍎</span>
+            <span class="calendar-icon" aria-hidden="true">🍎</span>
             <span>Apple Calendar</span>
           </a>
         </div>
@@ -116,12 +129,12 @@
 
       <div class="phone-buttons">
         <a [href]="'tel:' + danPhone" class="phone-button dan">
-          <span class="phone-icon">📞</span>
+          <span class="phone-icon" aria-hidden="true">📞</span>
           <span>Apelează Dan</span>
           <span class="phone-number">{{ danPhone }}</span>
         </a>
         <a [href]="'tel:' + mariaPhone" class="phone-button maria">
-          <span class="phone-icon">📞</span>
+          <span class="phone-icon" aria-hidden="true">📞</span>
           <span>Apelează Maria</span>
           <span class="phone-number">{{ mariaPhone }}</span>
         </a>
@@ -136,7 +149,7 @@
           rel="noopener noreferrer"
           class="whatsapp-button dan"
         >
-          <span class="whatsapp-icon">💬</span>
+          <span class="whatsapp-icon" aria-hidden="true">💬</span>
           <span>Mesaj Dan</span>
           <span class="phone-number">{{ danPhone }}</span>
         </a>
@@ -146,7 +159,7 @@
           rel="noopener noreferrer"
           class="whatsapp-button maria"
         >
-          <span class="whatsapp-icon">💬</span>
+          <span class="whatsapp-icon" aria-hidden="true">💬</span>
           <span>Mesaj Maria</span>
           <span class="phone-number">{{ mariaPhone }}</span>
         </a>
