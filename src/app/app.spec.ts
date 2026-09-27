@@ -25,13 +25,13 @@ describe('App', () => {
   });
 
   describe('countdown', () => {
-    it('computes days, hours, minutes and seconds remaining before the wedding', () => {
+    it('computes days, hours and minutes remaining before the wedding', () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2027-09-01T00:00:00+03:00'));
 
       fixture.detectChanges(); // runs the first render, which starts the countdown
 
-      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0, seconds: 0 });
+      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0 });
     });
 
     it('resets to zero once the wedding date has passed', () => {
@@ -40,7 +40,7 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0 });
     });
 
     it('refreshes on the countdown interval', () => {
@@ -48,23 +48,23 @@ describe('App', () => {
       vi.setSystemTime(new Date('2027-09-01T00:00:00+03:00'));
 
       fixture.detectChanges();
-      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0, seconds: 0 });
+      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0 });
 
       vi.setSystemTime(new Date('2027-09-06T00:00:00+03:00'));
       vi.advanceTimersByTime(60_000);
 
-      expect(component['countdown']()).toEqual({ days: 4, hours: 23, minutes: 59, seconds: 0 });
+      expect(component['countdown']()).toEqual({ days: 4, hours: 23, minutes: 59 });
     });
 
-    it('ticks down every second', () => {
+    it('rolls the minutes over as soon as a minute boundary passes', () => {
       vi.useFakeTimers();
-      vi.setSystemTime(new Date('2027-09-10T23:59:50+03:00'));
+      vi.setSystemTime(new Date('2027-09-10T23:58:00+03:00'));
 
       fixture.detectChanges();
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 10 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 2 });
 
       vi.advanceTimersByTime(1_000);
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 9 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 1 });
     });
 
     it('re-renders the countdown when the interval refreshes it', () => {
@@ -77,13 +77,13 @@ describe('App', () => {
           (fixture.nativeElement as HTMLElement).querySelectorAll('.countdown-value'),
           (el) => el.textContent?.trim(),
         );
-      expect(values()).toEqual(['10', '0', '0', '0']);
+      expect(values()).toEqual(['10', '0', '0']);
 
       vi.setSystemTime(new Date('2027-09-06T00:00:00+03:00'));
       vi.advanceTimersByTime(60_000);
       fixture.detectChanges();
 
-      expect(values()).toEqual(['4', '23', '59', '0']);
+      expect(values()).toEqual(['4', '23', '59']);
     });
 
     it('stops refreshing after the component is destroyed', () => {
@@ -96,7 +96,7 @@ describe('App', () => {
       vi.setSystemTime(new Date('2027-09-06T00:00:00+03:00'));
       vi.advanceTimersByTime(120_000);
 
-      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0, seconds: 0 });
+      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0 });
     });
 
     it('shows all zeros at the exact moment the wedding starts', () => {
@@ -105,7 +105,7 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0 });
     });
 
     it('shows the minutes left when less than an hour remains', () => {
@@ -114,7 +114,7 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 30, seconds: 0 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 30 });
     });
 
     it('never reports a negative countdown long after the wedding has passed', () => {
@@ -123,7 +123,7 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0 });
     });
   });
 
@@ -242,6 +242,33 @@ describe('App', () => {
       const compiled: HTMLElement = fixture.nativeElement;
       expect(compiled.querySelector('h1')?.textContent).toContain('Dan & Maria');
       expect(compiled.textContent).toContain(component['date']);
+    });
+
+    it('marks up the section labels as a heading outline for screen readers', () => {
+      const compiled: HTMLElement = fixture.nativeElement;
+      const headings = Array.from(compiled.querySelectorAll('h1, h2, h3'), (el) => [
+        el.tagName,
+        el.textContent?.trim(),
+      ]);
+
+      expect(headings).toEqual([
+        ['H1', 'Dan & Maria'],
+        ['H2', 'Data nunții'],
+        ['H2', 'Au mai rămas'],
+        ['H2', 'Locație'],
+        ['H3', 'Ceremonie'],
+        ['H3', 'Recepție'],
+        ['H2', 'RSVP'],
+      ]);
+    });
+
+    it('gives every link a distinct accessible name', () => {
+      const compiled: HTMLElement = fixture.nativeElement;
+      const names = Array.from(compiled.querySelectorAll('a'), (a) =>
+        a.textContent?.replace(/\s+/g, ' ').trim(),
+      );
+
+      expect(new Set(names).size).toBe(names.length);
     });
 
     it('renders tel: links for both phone numbers', () => {

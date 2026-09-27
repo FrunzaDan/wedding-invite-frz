@@ -50,6 +50,7 @@ export class App {
   constructor() {
     // Render hooks only run in the browser, so the timer never starts on a server.
     let countdownIntervalId: ReturnType<typeof setInterval> | undefined;
+    // Still ticks every second so the minute rolls over on time; unchanged values don't touch the DOM.
     afterNextRender(() => {
       this.countdown.set(this.computeCountdown());
       countdownIntervalId = setInterval(() => this.countdown.set(this.computeCountdown()), 1_000);
@@ -103,18 +104,17 @@ export class App {
     );
   }
 
-  private computeCountdown(): { days: number; hours: number; minutes: number; seconds: number } {
+  private computeCountdown(): { days: number; hours: number; minutes: number } {
     const weddingDate = new Date('2027-09-11T00:00:00+03:00').getTime();
     const totalSeconds = Math.floor((weddingDate - Date.now()) / 1000);
 
     if (totalSeconds <= 0) {
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      return { days: 0, hours: 0, minutes: 0 };
     }
     return {
       days: Math.floor(totalSeconds / (60 * 60 * 24)),
       hours: Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60)),
       minutes: Math.floor((totalSeconds % (60 * 60)) / 60),
-      seconds: totalSeconds % 60,
     };
   }
 

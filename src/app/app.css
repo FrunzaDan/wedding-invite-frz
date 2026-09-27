@@ -14,6 +14,28 @@
   --rose-deep: #4d2f33;
   --rose-muted: #8a6467;
 
+  /* One accent hue for every line, border and ornament. */
+  --line: rgba(120, 80, 86, 0.2);
+  --line-strong: rgba(120, 80, 86, 0.4);
+  --line-width: 1.5px;
+
+  --surface: rgba(255, 255, 255, 0.5);
+  --surface-hover: rgba(255, 255, 255, 0.85);
+  --tint: linear-gradient(135deg, rgba(232, 205, 213, 0.3), rgba(232, 205, 213, 0.1));
+
+  --radius-sm: 16px;
+  --radius-md: 24px;
+  --radius-lg: 40px;
+
+  --shadow-sm: 0 4px 12px rgba(70, 41, 43, 0.05);
+  --shadow-md: 0 8px 24px rgba(70, 41, 43, 0.07);
+  --shadow-hover: 0 8px 18px rgba(70, 41, 43, 0.1);
+
+  --transition: 0.25s ease;
+
+  --text-display: clamp(1.5rem, 2.8vw, 2.1rem);
+  --text-body: 1.1rem;
+
   display: block;
   min-height: 100vh;
   font-family: 'Georgia', 'Times New Roman', serif;
@@ -27,6 +49,19 @@
 
 * {
   box-sizing: border-box;
+}
+
+/* Hidden visually but still read by screen readers. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 img {
@@ -44,27 +79,16 @@ img {
 .invite-card {
   width: min(100%, 900px);
   background: rgba(255, 255, 255, 0.85);
-  border: 2px solid rgba(120, 80, 86, 0.2);
-  border-radius: 40px;
+  border: var(--line-width) solid var(--line);
+  border-radius: var(--radius-lg);
   box-shadow:
     0 50px 100px rgba(103, 61, 64, 0.15),
     0 0 60px rgba(232, 205, 213, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  padding: var(--space-8) var(--space-6) var(--space-7);
+  padding: var(--space-7) var(--space-6) var(--space-8);
   text-align: center;
   backdrop-filter: blur(8px);
   position: relative;
-}
-
-.invite-card::before {
-  content: '';
-  position: absolute;
-  top: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(120, 80, 86, 0.4), transparent);
 }
 
 .invite-card::after {
@@ -75,26 +99,52 @@ img {
   transform: translateX(-50%);
   width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(120, 80, 86, 0.4), transparent);
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
 }
 
-.image-wrap {
-  width: min(100%, 440px);
-  margin: 0 auto var(--space-5);
-  border-radius: 28px;
-  overflow: hidden;
-  box-shadow:
-    0 25px 50px rgba(70, 41, 43, 0.18),
-    0 0 1px rgba(0, 0, 0, 0.1);
-  border: 6px solid rgba(255, 255, 255, 0.9);
+/* ---------- Ornaments ---------- */
+
+.divider {
+  width: 140px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  margin: var(--space-6) auto;
+  position: relative;
 }
 
-.image-wrap img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  display: block;
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  background: var(--line-strong);
+  border-radius: 50%;
+  transform: translateY(-50%);
 }
+
+.divider::before {
+  left: -12px;
+}
+
+.divider::after {
+  right: -12px;
+}
+
+.divider-top {
+  margin-top: 0;
+  margin-bottom: var(--space-5);
+}
+
+.divider-small {
+  width: 60px;
+  height: var(--line-width);
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  margin: var(--space-4) auto;
+}
+
+/* ---------- Type ---------- */
 
 .eyebrow {
   margin: 0 0 var(--space-3);
@@ -114,6 +164,42 @@ h1 {
   color: var(--ink);
 }
 
+.label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-size: 0.85rem;
+  color: var(--rose-muted);
+  font-weight: 600;
+}
+
+.section-heading {
+  display: block;
+  margin-bottom: var(--space-3);
+}
+
+.date-block strong,
+.rsvp-box strong,
+.time-block strong {
+  display: block;
+  font-size: var(--text-display);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+
+.message,
+.confirmation-text {
+  margin: 0 auto;
+  max-width: 46ch;
+  font-size: var(--text-body);
+  line-height: 1.85;
+  color: var(--ink-soft);
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Intro ---------- */
+
 .parents-names {
   margin: var(--space-5) 0 var(--space-6);
   display: flex;
@@ -131,56 +217,44 @@ h1 {
   line-height: 1.6;
 }
 
+.image-wrap {
+  width: min(100%, 440px);
+  margin: 0 auto;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow:
+    0 25px 50px rgba(70, 41, 43, 0.18),
+    0 0 1px rgba(0, 0, 0, 0.1);
+  border: 6px solid rgba(255, 255, 255, 0.9);
+}
+
+.image-wrap img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* ---------- Sections: every block sits the same distance apart ---------- */
+
 .date-block,
+.countdown,
+.venues,
 .rsvp-box {
+  margin-top: var(--space-6);
+}
+
+.date-block {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-6);
-  color: var(--ink-soft);
 }
 
-.date-block strong,
-.rsvp-box strong {
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: 0.01em;
-}
-
-.label {
-  text-transform: uppercase;
-  letter-spacing: 0.2rem;
-  font-size: 0.9rem;
-  color: var(--rose-muted);
-  font-weight: 600;
-}
-
-.calendar-label {
-  display: block;
-  margin-top: var(--space-3);
-  margin-bottom: var(--space-1);
-  text-transform: uppercase;
-  letter-spacing: 0.2rem;
-  font-size: 0.85rem;
-  color: var(--rose-muted);
-  font-weight: 600;
-}
-
-.countdown {
-  margin-top: var(--space-5);
-  margin-bottom: var(--space-6);
-}
-
-.countdown-heading {
-  display: block;
-  margin-bottom: var(--space-3);
-}
+/* ---------- Countdown ---------- */
 
 .countdown-items {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-3);
 }
 
@@ -190,57 +264,47 @@ h1 {
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-4) var(--space-3);
-  background: linear-gradient(135deg, rgba(232, 205, 213, 0.3), rgba(232, 205, 213, 0.1));
-  border: 1.5px solid rgba(120, 80, 86, 0.2);
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(70, 41, 43, 0.05);
+  background: var(--tint);
+  border: var(--line-width) solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .countdown-value {
   font-size: clamp(1.8rem, 3vw, 2.6rem);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--rose);
   line-height: 1;
-  /* Equal-width digits keep the boxes from jittering as the seconds tick. */
+  /* Equal-width digits keep the boxes from jittering as the numbers change. */
   font-variant-numeric: tabular-nums;
 }
 
 .countdown-label {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.12rem;
   color: var(--rose-muted);
   font-weight: 600;
 }
 
+/* ---------- Venues ---------- */
+
 .timeline {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
-  margin-top: var(--space-6);
 }
 
 .time-block {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
-  border: 2px solid rgba(120, 80, 86, 0.15);
-  border-radius: 24px;
+  background: var(--surface);
+  border: var(--line-width) solid var(--line);
+  border-radius: var(--radius-md);
   padding: var(--space-5) var(--space-4);
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(70, 41, 43, 0.06);
-  transition: all 0.3s ease;
-}
-
-.time-block:hover {
-  box-shadow: 0 12px 32px rgba(70, 41, 43, 0.1);
-  border-color: rgba(120, 80, 86, 0.25);
+  box-shadow: var(--shadow-md);
 }
 
 .time-block strong {
-  display: block;
   margin-top: var(--space-2);
-  font-size: clamp(1.7rem, 3.2vw, 2.4rem);
-  color: var(--ink);
-  font-weight: 600;
 }
 
 .time-block p,
@@ -252,36 +316,18 @@ h1 {
 
 .time-block small {
   display: block;
+  margin-top: var(--space-1);
   font-size: 0.95rem;
   letter-spacing: 0.02em;
 }
 
-.map-link {
-  display: inline-block;
-  margin-top: var(--space-3);
-  padding: var(--space-1) 0;
-  color: var(--rose);
-  font-weight: 600;
-  text-decoration: none;
-  border-bottom: 2px solid rgba(122, 77, 82, 0.4);
-  font-size: 1rem;
-  letter-spacing: 0.02em;
-  transition: all 0.3s ease;
-}
-
-.map-link:hover {
-  color: var(--rose-deep);
-  border-bottom-color: rgba(122, 77, 82, 0.8);
-}
-
 .map-frame {
-  position: relative;
   width: 100%;
   margin-top: var(--space-4);
-  border-radius: 18px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  border: 3px solid rgba(120, 80, 86, 0.3);
-  box-shadow: 0 12px 28px rgba(70, 41, 43, 0.12);
+  border: var(--line-width) solid var(--line);
+  box-shadow: var(--shadow-sm);
   background: #fff;
 }
 
@@ -292,179 +338,106 @@ h1 {
   border: 0;
 }
 
-.calendar-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-2);
+.map-link {
+  display: inline-block;
   margin-top: var(--space-3);
-}
-
-.calendar-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  min-width: 0;
-  min-height: 76px;
-  padding: var(--space-3) var(--space-2);
-  border-radius: 14px;
-  text-decoration: none;
-  color: var(--ink);
-  font-weight: 600;
-  font-size: 0.9rem;
-  letter-spacing: 0.01em;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1.5px solid rgba(120, 80, 86, 0.25);
-  box-shadow: 0 4px 12px rgba(70, 41, 43, 0.05);
-  transition: all 0.3s ease;
-}
-
-.calendar-button:hover {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(120, 80, 86, 0.4);
-  box-shadow: 0 8px 18px rgba(70, 41, 43, 0.1);
-  transform: translateY(-2px);
-}
-
-.calendar-icon {
-  font-size: 1.6rem;
-  line-height: 1;
-}
-
-.divider {
-  width: 140px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(113, 82, 85, 0.5), transparent);
-  margin: var(--space-6) auto;
-  position: relative;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 4px;
-  height: 4px;
-  background: rgba(113, 82, 85, 0.4);
-  border-radius: 50%;
-  transform: translateY(-50%);
-}
-
-.divider::before {
-  left: -12px;
-}
-
-.divider::after {
-  right: -12px;
-}
-
-.message {
-  margin: 0 auto;
-  max-width: 46ch;
-  font-size: 1.15rem;
-  line-height: 1.95;
-  color: var(--ink-soft);
-  letter-spacing: 0.01em;
-}
-
-.rsvp-box {
-  margin-top: var(--space-6);
-  background: linear-gradient(135deg, rgba(126, 86, 90, 0.12), rgba(126, 86, 90, 0.06));
-  border: 2px solid rgba(126, 86, 90, 0.2);
-  border-radius: 24px;
-  padding: var(--space-6) var(--space-5);
-  box-shadow: 0 8px 24px rgba(126, 86, 90, 0.08);
-}
-
-.rsvp-box .label {
-  display: block;
-  margin-bottom: var(--space-1);
-}
-
-.rsvp-box strong {
-  display: block;
-  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
-  color: var(--ink);
-  margin-bottom: var(--space-4);
-}
-
-.divider-small {
-  width: 60px;
-  height: 1.5px;
-  background: linear-gradient(90deg, transparent, rgba(120, 80, 86, 0.4), transparent);
-  margin: var(--space-4) auto;
-}
-
-.confirmation-text {
-  margin: 0 0 var(--space-5);
-  font-size: 1.05rem;
-  line-height: 1.85;
-  color: var(--ink-soft);
-  letter-spacing: 0.01em;
-  max-width: 46ch;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.confirmation-text strong {
-  display: inline;
+  padding: var(--space-1) 0 2px;
   color: var(--rose);
   font-weight: 600;
-  font-size: 1.05rem;
+  text-decoration: none;
+  border-bottom: var(--line-width) solid var(--line-strong);
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  transition: all var(--transition);
+}
+
+.map-link:hover {
+  color: var(--rose-deep);
+  border-bottom-color: var(--rose);
+}
+
+.calendar-label {
+  display: block;
+  margin-top: var(--space-4);
+}
+
+/* ---------- Buttons ---------- */
+
+.calendar-buttons,
+.phone-buttons,
+.whatsapp-buttons {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.calendar-buttons {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: var(--space-2);
 }
 
 .phone-buttons,
 .whatsapp-buttons {
-  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
-  width: 100%;
 }
 
+.calendar-button,
 .phone-button,
 .whatsapp-button {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  width: 100%;
+  gap: var(--space-1);
   min-width: 0;
-  min-height: 84px;
-  box-sizing: border-box;
-  padding: var(--space-4);
-  border-radius: 16px;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
   text-decoration: none;
   color: var(--ink);
   font-weight: 600;
-  font-size: 1.05rem;
-  transition: all 0.3s ease;
+  letter-spacing: 0.01em;
+  background: var(--surface);
+  border: var(--line-width) solid var(--line);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
 }
 
-.phone-button {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1.5px solid rgba(120, 80, 86, 0.25);
-  box-shadow: 0 4px 12px rgba(70, 41, 43, 0.05);
+.calendar-button {
+  min-height: 76px;
+  font-size: 0.9rem;
 }
 
+.phone-button,
 .whatsapp-button {
-  background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(37, 211, 102, 0.04));
-  border: 1.5px solid rgba(37, 211, 102, 0.25);
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.05);
+  min-height: 84px;
+  font-size: 1.05rem;
 }
 
+.calendar-button:hover,
 .phone-button:hover {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: rgba(120, 80, 86, 0.4);
-  box-shadow: 0 8px 18px rgba(70, 41, 43, 0.1);
+  background: var(--surface-hover);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-hover);
   transform: translateY(-2px);
 }
 
-.phone-icon {
-  font-size: 1.9rem;
+/* WhatsApp keeps its brand green as a quiet tint on the shared button shape. */
+.whatsapp-button {
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(37, 211, 102, 0.04));
+  border-color: rgba(37, 211, 102, 0.25);
+}
+
+.whatsapp-button:hover {
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.15), rgba(37, 211, 102, 0.08));
+  border-color: rgba(37, 211, 102, 0.45);
+  box-shadow: 0 8px 18px rgba(37, 211, 102, 0.12);
+  transform: translateY(-2px);
+}
+
+.calendar-icon,
+.phone-icon,
+.whatsapp-icon {
+  font-size: 1.6rem;
   line-height: 1;
 }
 
@@ -475,21 +448,47 @@ h1 {
   letter-spacing: 0.02em;
 }
 
-.whatsapp-button:hover {
-  background: linear-gradient(135deg, rgba(37, 211, 102, 0.15), rgba(37, 211, 102, 0.08));
-  border-color: rgba(37, 211, 102, 0.4);
-  box-shadow: 0 8px 18px rgba(37, 211, 102, 0.12);
-  transform: translateY(-2px);
+/* ---------- RSVP ---------- */
+
+.rsvp-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(126, 86, 90, 0.1), rgba(126, 86, 90, 0.04));
+  border: var(--line-width) solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-6) var(--space-5);
+  box-shadow: var(--shadow-md);
 }
 
-.whatsapp-icon {
-  font-size: 1.9rem;
-  line-height: 1;
+.rsvp-box strong {
+  margin-top: var(--space-2);
 }
+
+.rsvp-box .confirmation-text {
+  margin-bottom: var(--space-4);
+}
+
+.rsvp-box .phone-buttons + .confirmation-text {
+  margin-top: var(--space-4);
+}
+
+.confirmation-text strong {
+  display: inline;
+  margin: 0;
+  font-size: inherit;
+  color: var(--rose);
+}
+
+/* ---------- Small screens ---------- */
 
 @media (max-width: 640px) {
   .invite-card {
-    padding: var(--space-6) var(--space-4) var(--space-5);
+    padding: var(--space-6) var(--space-4) var(--space-7);
+  }
+
+  .eyebrow {
+    letter-spacing: 0.22rem;
   }
 
   .timeline {
@@ -498,27 +497,28 @@ h1 {
   }
 
   .countdown-items {
-    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);
   }
 
-  .eyebrow {
-    letter-spacing: 0.22rem;
+  .countdown-item {
+    padding: var(--space-3) var(--space-1);
+  }
+
+  .countdown-label {
+    letter-spacing: 0.06rem;
   }
 
   .map-frame iframe {
     min-height: 200px;
   }
 
-  .phone-buttons {
-    grid-template-columns: 1fr;
+  .rsvp-box {
+    padding: var(--space-5) var(--space-4);
   }
 
+  .calendar-buttons,
+  .phone-buttons,
   .whatsapp-buttons {
-    grid-template-columns: 1fr;
-  }
-
-  .calendar-buttons {
     grid-template-columns: 1fr;
   }
 }

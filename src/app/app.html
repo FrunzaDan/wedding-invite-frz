@@ -1,5 +1,7 @@
 <main class="page-shell">
   <section class="invite-card">
+    <div class="divider divider-top"></div>
+
     <p class="eyebrow">Sunteți invitați călduros la nunta noastră</p>
     <h1>Dan & Maria</h1>
 
@@ -15,12 +17,12 @@
     </div>
 
     <div class="date-block">
-      <span class="label">Data nuntii</span>
+      <h2 class="label">Data nunții</h2>
       <strong>{{ date }}</strong>
     </div>
 
     <div class="countdown">
-      <span class="label countdown-heading">Au mai rămas</span>
+      <h2 class="label section-heading">Au mai rămas</h2>
       <div class="countdown-items">
         <div class="countdown-item">
           <span class="countdown-value">{{ countdown().days }}</span>
@@ -34,92 +36,90 @@
           <span class="countdown-value">{{ countdown().minutes }}</span>
           <span class="countdown-label">Minute</span>
         </div>
-        <div class="countdown-item">
-          <span class="countdown-value">{{ countdown().seconds }}</span>
-          <span class="countdown-label">Secunde</span>
-        </div>
       </div>
     </div>
 
-    <span class="label countdown-heading">Locație</span>
-    <div class="timeline">
-      <div class="time-block">
-        <span class="label">Ceremonie</span>
-        <strong>{{ ceremonyTime }}</strong>
-        <p>{{ ceremonyVenue }}</p>
-        <small>{{ ceremonyStreet }}</small>
-        <small>{{ ceremonyLocation }}</small>
-        <div class="map-frame">
-          <iframe
-            [src]="ceremonyMapEmbed"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allowfullscreen
-            title="Hartă către Biserica Ursulinelor"
-          ></iframe>
+    <div class="venues">
+      <h2 class="label section-heading">Locație</h2>
+      <div class="timeline">
+        <div class="time-block">
+          <h3 class="label">Ceremonie</h3>
+          <strong>{{ ceremonyTime }}</strong>
+          <p>{{ ceremonyVenue }}</p>
+          <small>{{ ceremonyStreet }}</small>
+          <small>{{ ceremonyLocation }}</small>
+          <div class="map-frame">
+            <iframe
+              [src]="ceremonyMapEmbed"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+              title="Hartă către Biserica Ursulinelor"
+            ></iframe>
+          </div>
+          <a [href]="ceremonyMap" target="_blank" rel="noopener noreferrer" class="map-link">
+            Deschide în Hărți<span class="sr-only"> – Biserica Ursulinelor</span>
+          </a>
+          <span class="label calendar-label" id="ceremony-calendar-label">Adaugă în calendar</span>
+          <div class="calendar-buttons" role="group" aria-labelledby="ceremony-calendar-label">
+            <a
+              [href]="ceremonyGoogleCalendarUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="calendar-button google"
+            >
+              <span class="calendar-icon" aria-hidden="true">📅</span>
+              <span>Google</span><span class="sr-only"> – ceremonie</span>
+            </a>
+            <a [href]="ceremonySamsungCalendarUrl" class="calendar-button samsung">
+              <span class="calendar-icon" aria-hidden="true">📱</span>
+              <span>Samsung</span><span class="sr-only"> – ceremonie</span>
+            </a>
+            <a [href]="ceremonyIcsUrl" class="calendar-button apple">
+              <span class="calendar-icon" aria-hidden="true">🍎</span>
+              <span>Apple</span><span class="sr-only"> – ceremonie, fișier .ics</span>
+            </a>
+          </div>
         </div>
-        <a [href]="ceremonyMap" target="_blank" rel="noopener noreferrer" class="map-link">
-          Deschide în Hărți
-        </a>
-        <span class="calendar-label">Adaugă în calendar</span>
-        <div class="calendar-buttons">
-          <a
-            [href]="ceremonyGoogleCalendarUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="calendar-button google"
-          >
-            <span class="calendar-icon" aria-hidden="true">📅</span>
-            <span>Google</span>
-          </a>
-          <a [href]="ceremonySamsungCalendarUrl" class="calendar-button samsung">
-            <span class="calendar-icon" aria-hidden="true">📱</span>
-            <span>Samsung</span>
-          </a>
-          <a [href]="ceremonyIcsUrl" class="calendar-button apple">
-            <span class="calendar-icon" aria-hidden="true">🍎</span>
-            <span>Apple</span>
-          </a>
-        </div>
-      </div>
 
-      <div class="time-block">
-        <span class="label">Recepție</span>
-        <strong>{{ receptionTime }}</strong>
-        <p>{{ receptionVenue }}</p>
-        <small>{{ receptionStreet }}</small>
-        <small>{{ receptionLocation }}</small>
-        <div class="map-frame">
-          <iframe
-            [src]="receptionMapEmbed"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allowfullscreen
-            title="Hartă către Ramada Sibiu"
-          ></iframe>
-        </div>
-        <a [href]="receptionMap" target="_blank" rel="noopener noreferrer" class="map-link">
-          Deschide în Hărți
-        </a>
-        <span class="calendar-label">Adaugă în calendar</span>
-        <div class="calendar-buttons">
-          <a
-            [href]="receptionGoogleCalendarUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="calendar-button google"
-          >
-            <span class="calendar-icon" aria-hidden="true">📅</span>
-            <span>Google</span>
+        <div class="time-block">
+          <h3 class="label">Recepție</h3>
+          <strong>{{ receptionTime }}</strong>
+          <p>{{ receptionVenue }}</p>
+          <small>{{ receptionStreet }}</small>
+          <small>{{ receptionLocation }}</small>
+          <div class="map-frame">
+            <iframe
+              [src]="receptionMapEmbed"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+              title="Hartă către Ramada Sibiu"
+            ></iframe>
+          </div>
+          <a [href]="receptionMap" target="_blank" rel="noopener noreferrer" class="map-link">
+            Deschide în Hărți<span class="sr-only"> – Ramada Sibiu</span>
           </a>
-          <a [href]="receptionSamsungCalendarUrl" class="calendar-button samsung">
-            <span class="calendar-icon" aria-hidden="true">📱</span>
-            <span>Samsung</span>
-          </a>
-          <a [href]="receptionIcsUrl" class="calendar-button apple">
-            <span class="calendar-icon" aria-hidden="true">🍎</span>
-            <span>Apple</span>
-          </a>
+          <span class="label calendar-label" id="reception-calendar-label">Adaugă în calendar</span>
+          <div class="calendar-buttons" role="group" aria-labelledby="reception-calendar-label">
+            <a
+              [href]="receptionGoogleCalendarUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="calendar-button google"
+            >
+              <span class="calendar-icon" aria-hidden="true">📅</span>
+              <span>Google</span><span class="sr-only"> – recepție</span>
+            </a>
+            <a [href]="receptionSamsungCalendarUrl" class="calendar-button samsung">
+              <span class="calendar-icon" aria-hidden="true">📱</span>
+              <span>Samsung</span><span class="sr-only"> – recepție</span>
+            </a>
+            <a [href]="receptionIcsUrl" class="calendar-button apple">
+              <span class="calendar-icon" aria-hidden="true">🍎</span>
+              <span>Apple</span><span class="sr-only"> – recepție, fișier .ics</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -132,7 +132,7 @@
     </p>
 
     <div class="rsvp-box">
-      <span class="label">RSVP</span>
+      <h2 class="label">RSVP</h2>
       <strong>{{ rsvp }}</strong>
 
       <div class="divider-small"></div>
