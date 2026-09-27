@@ -25,13 +25,13 @@ describe('App', () => {
   });
 
   describe('countdown', () => {
-    it('computes days and hours remaining before the wedding', () => {
+    it('computes days, hours, minutes and seconds remaining before the wedding', () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2027-09-01T00:00:00+03:00'));
 
-      fixture.detectChanges(); // triggers ngOnInit
+      fixture.detectChanges(); // runs the first render, which starts the countdown
 
-      expect(component['countdown']).toEqual({ days: 10, hours: 0 });
+      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0, seconds: 0 });
     });
 
     it('resets to zero once the wedding date has passed', () => {
@@ -40,7 +40,7 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']).toEqual({ days: 0, hours: 0 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     });
 
     it('refreshes on the countdown interval', () => {
@@ -48,12 +48,42 @@ describe('App', () => {
       vi.setSystemTime(new Date('2027-09-01T00:00:00+03:00'));
 
       fixture.detectChanges();
-      expect(component['countdown']).toEqual({ days: 10, hours: 0 });
+      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0, seconds: 0 });
 
       vi.setSystemTime(new Date('2027-09-06T00:00:00+03:00'));
       vi.advanceTimersByTime(60_000);
 
-      expect(component['countdown']).toEqual({ days: 4, hours: 23 });
+      expect(component['countdown']()).toEqual({ days: 4, hours: 23, minutes: 59, seconds: 0 });
+    });
+
+    it('ticks down every second', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2027-09-10T23:59:50+03:00'));
+
+      fixture.detectChanges();
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 10 });
+
+      vi.advanceTimersByTime(1_000);
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 9 });
+    });
+
+    it('re-renders the countdown when the interval refreshes it', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2027-09-01T00:00:00+03:00'));
+
+      fixture.detectChanges();
+      const values = () =>
+        Array.from(
+          (fixture.nativeElement as HTMLElement).querySelectorAll('.countdown-value'),
+          (el) => el.textContent?.trim(),
+        );
+      expect(values()).toEqual(['10', '0', '0', '0']);
+
+      vi.setSystemTime(new Date('2027-09-06T00:00:00+03:00'));
+      vi.advanceTimersByTime(60_000);
+      fixture.detectChanges();
+
+      expect(values()).toEqual(['4', '23', '59', '0']);
     });
 
     it('stops refreshing after the component is destroyed', () => {
@@ -66,25 +96,25 @@ describe('App', () => {
       vi.setSystemTime(new Date('2027-09-06T00:00:00+03:00'));
       vi.advanceTimersByTime(120_000);
 
-      expect(component['countdown']).toEqual({ days: 10, hours: 0 });
+      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0, seconds: 0 });
     });
 
-    it('shows zero days and hours at the exact moment the wedding starts', () => {
+    it('shows all zeros at the exact moment the wedding starts', () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2027-09-11T00:00:00+03:00'));
 
       fixture.detectChanges();
 
-      expect(component['countdown']).toEqual({ days: 0, hours: 0 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     });
 
-    it('floors partial hours instead of rounding when less than an hour remains', () => {
+    it('shows the minutes left when less than an hour remains', () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2027-09-10T23:30:00+03:00'));
 
       fixture.detectChanges();
 
-      expect(component['countdown']).toEqual({ days: 0, hours: 0 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 30, seconds: 0 });
     });
 
     it('never reports a negative countdown long after the wedding has passed', () => {
@@ -93,7 +123,7 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']).toEqual({ days: 0, hours: 0 });
+      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     });
   });
 

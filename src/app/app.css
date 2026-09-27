@@ -180,7 +180,7 @@ h1 {
 
 .countdown-items {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-3);
 }
 
@@ -201,6 +201,8 @@ h1 {
   font-weight: 700;
   color: var(--rose);
   line-height: 1;
+  /* Equal-width digits keep the boxes from jittering as the seconds tick. */
+  font-variant-numeric: tabular-nums;
 }
 
 .countdown-label {
@@ -496,6 +498,7 @@ h1 {
   }
 
   .countdown-items {
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);
   }
 

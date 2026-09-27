@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { afterNextRender, Component, DestroyRef, inject, signal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
@@ -6,8 +7,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App implements OnInit, OnDestroy {
-  private sanitizer = inject(DomSanitizer);
+export class App {
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly document = inject(DOCUMENT);
 
   protected readonly date = '11 septembrie 2027';
   protected readonly danPhone = '+40773851161';
@@ -43,14 +45,17 @@ export class App implements OnInit, OnDestroy {
   protected readonly ceremonyMapEmbed: SafeResourceUrl;
   protected readonly receptionMapEmbed: SafeResourceUrl;
 
-  protected countdown = {
-    days: 0,
-    hours: 0,
-  };
-
-  private countdownIntervalId?: ReturnType<typeof setInterval>;
+  protected readonly countdown = signal(this.computeCountdown());
 
   constructor() {
+    // Render hooks only run in the browser, so the timer never starts on a server.
+    let countdownIntervalId: ReturnType<typeof setInterval> | undefined;
+    afterNextRender(() => {
+      this.countdown.set(this.computeCountdown());
+      countdownIntervalId = setInterval(() => this.countdown.set(this.computeCountdown()), 1_000);
+    });
+    inject(DestroyRef).onDestroy(() => clearInterval(countdownIntervalId));
+
     const ceremonyTitle = 'Nuntă Dan & Maria - Ceremonie';
     const ceremonyLocationStr = `${this.ceremonyVenue}, ${this.ceremonyStreet}, ${this.ceremonyLocation}`;
     const ceremonyDetails = 'Ceremonia religioasă a nunții Dan & Maria.';
@@ -98,28 +103,19 @@ export class App implements OnInit, OnDestroy {
     );
   }
 
-  ngOnInit(): void {
-    this.updateCountdown();
-    this.countdownIntervalId = setInterval(() => this.updateCountdown(), 60_000);
-  }
-
-  ngOnDestroy(): void {
-    clearInterval(this.countdownIntervalId);
-  }
-
-  private updateCountdown(): void {
+  private computeCountdown(): { days: number; hours: number; minutes: number; seconds: number } {
     const weddingDate = new Date('2027-09-11T00:00:00+03:00').getTime();
-    const now = new Date().getTime();
-    const diff = weddingDate - now;
+    const totalSeconds = Math.floor((weddingDate - Date.now()) / 1000);
 
-    if (diff > 0) {
-      this.countdown = {
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-      };
-    } else {
-      this.countdown = { days: 0, hours: 0 };
+    if (totalSeconds <= 0) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
     }
+    return {
+      days: Math.floor(totalSeconds / (60 * 60 * 24)),
+      hours: Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60)),
+      minutes: Math.floor((totalSeconds % (60 * 60)) / 60),
+      seconds: totalSeconds % 60,
+    };
   }
 
   private buildMapEmbed(street: string, location: string): SafeResourceUrl {
@@ -148,7 +144,7 @@ export class App implements OnInit, OnDestroy {
   ): string {
     const beginTime = new Date(startIso).getTime();
     const endTime = new Date(endIso).getTime();
-    const fallbackUrl = encodeURIComponent(`${window.location.origin}${fallbackIcsUrl}`);
+    const fallbackUrl = encodeURIComponent(`${this.document.location.origin}${fallbackIcsUrl}`);
 
     return (
       'intent://com.android.calendar/events#Intent;' +
