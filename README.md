@@ -1,19 +1,19 @@
 # Wedding Invite
 
-A single-page wedding invitation for Dan & Maria, built with Angular. It shows a countdown, the ceremony and reception details with maps, one-tap "add to calendar" buttons and quick ways to RSVP. It's one component with no backend, hosted on Firebase.
+Wedding Invite is a single-page digital invitation for Dan & Maria's wedding. Guests see a countdown to the day, the ceremony and reception details with embedded maps, and ways to RSVP. Each event has one-tap buttons to add it to Google, Samsung or Apple Calendar, so guests don't have to type anything in. The whole app is one Angular component with no backend, and all the details are hardcoded in `app.ts`. It's written in Romanian and hosted on Firebase Hosting.
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-- **Countdown:** Days and hours until the wedding, refreshed every minute.
-- **Event details with maps:** Time, venue and address for the ceremony and the reception, each with an embedded Google Map and a link to open it in Maps.
-- **Add to calendar:** Separate buttons for each event: Google Calendar (prefilled link), Samsung (an Android `intent://` link that opens the native "new event" screen) and Apple (a static `.ics` file, also used as the Samsung fallback).
-- **RSVP:** Tap-to-call and WhatsApp links for both Dan and Maria.
+- **Countdown:** Shows the days and hours left until the wedding, refreshed every minute. It stops cleanly at zero once the day has arrived instead of counting into negative numbers.
+- **Event details with maps:** The ceremony and the reception each have a time, venue and address. Each one also has an embedded Google Map and a link that opens the location in the Maps app.
+- **Add to calendar:** Each event has three buttons. Google opens a prefilled Google Calendar event, Samsung uses an Android `intent://` link to open the phone's native "new event" screen, and Apple downloads a static `.ics` file, which is also the fallback for the Samsung button.
+- **RSVP:** Tap-to-call and WhatsApp buttons for both Dan and Maria, so guests can answer with one tap from their phone.
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend:** Angular 22.2 (standalone, zoneless), TypeScript, plain CSS. The whole UI is `src/app/app.ts` / `app.html` / `app.css`
 - **Backend:** N/A
@@ -22,7 +22,7 @@ A single-page wedding invitation for Dan & Maria, built with Angular. It shows a
 
 ---
 
-## 📋 Prerequisites
+## Prerequisites
 
 Before running this project, ensure you have the following installed:
 
@@ -31,7 +31,7 @@ Before running this project, ensure you have the following installed:
 
 ---
 
-## ⚙️ Local Setup & Running
+## Local Setup & Running
 
 ### 1. Clone the repository
 
@@ -57,7 +57,7 @@ npm run build      # production build → dist/wedding-invite/browser
 
 ---
 
-## 🔌 API / App Usage
+## API / App Usage
 
 To deploy (Firebase project in `.firebaserc`):
 
@@ -72,7 +72,7 @@ The Samsung button only works in Android browsers. If you change `buildSamsungCa
 
 ---
 
-## 📝 License & Notes
+## License & Notes
 
 Personal project with no license file. All UI text is in Romanian.
 
