@@ -64,11 +64,7 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test",
-          "options": {
-            "tsConfig": "tsconfig.spec.json",
-            "buildTarget": "::development"
-          }
+          "builder": "@angular/build:unit-test"
         }
       }
     }
