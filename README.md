@@ -1,54 +1,79 @@
 # Wedding Invite
 
-A single-page wedding invitation for Dan & Maria, built with Angular. It's a small app on purpose — one component, no backend — but it packs in the stuff you'd actually want for a wedding site: a live countdown, venue details with embedded maps, one-tap "add to calendar" for the ceremony and reception, and quick ways to RSVP by phone or WhatsApp.
+A single-page wedding invitation for Dan & Maria, built with Angular. It shows a countdown, the ceremony and reception details with maps, one-tap "add to calendar" buttons and quick ways to RSVP. It's one component with no backend, hosted on Firebase.
 
-## What it does
+---
 
-- **Countdown** to the wedding date, refreshed every minute (days + hours remaining).
-- **Ceremony & reception details** — time, venue, address — each with an embedded Google Maps view and a link to open the full map.
-- **Add to calendar**, one button per platform, for both events:
-  - **Google** — opens `calendar.google.com` with the event prefilled.
-  - **Samsung** — fires an Android intent URL straight into the Calendar Provider's "insert event" flow, so it opens the native "new event" screen instead of downloading a file.
-  - **Apple** — links to a static `.ics` file (also the fallback for the Samsung button if the intent can't be resolved).
-- **RSVP** — tap-to-call and WhatsApp links for both Dan and Maria.
+## 🚀 Key Features
 
-Everything is in Romanian, hardcoded for this specific wedding — dates, names, venues, and phone numbers live as component fields in `src/app/app.ts`, not in a CMS or config file. If you're forking this for your own wedding, that's the file to edit.
+- **Countdown:** Days and hours until the wedding, refreshed every minute.
+- **Event details with maps:** Time, venue and address for the ceremony and the reception, each with an embedded Google Map and a link to open it in Maps.
+- **Add to calendar:** Separate buttons for each event: Google Calendar (prefilled link), Samsung (an Android `intent://` link that opens the native "new event" screen) and Apple (a static `.ics` file, also used as the Samsung fallback).
+- **RSVP:** Tap-to-call and WhatsApp links for both Dan and Maria.
 
-## Stack
+---
 
-- **Angular 22** (standalone components, no NgModules) — the whole UI is one component: `app.ts` / `app.html` / `app.css`.
-- **Vitest** for unit tests, via Angular's native `@angular/build:unit-test` builder (not Karma/Jasmine).
-- **Firebase Hosting** for deployment — see `firebase.json`.
-- Plain CSS, no UI framework or component library.
+## 🛠 Tech Stack
 
-## A couple of things worth knowing before you touch this
+- **Frontend:** Angular 22.2 (standalone, zoneless), TypeScript, plain CSS. The whole UI is `src/app/app.ts` / `app.html` / `app.css`
+- **Backend:** N/A
+- **Database / Storage:** N/A
+- **Tooling & Other:** Vitest + jsdom, Prettier, Firebase Hosting
 
-- **The `.ics` files in `public/calendar/` are static and hand-written**, not generated at build time. If you change an event's date/time in `app.ts`, you also need to update the matching `.ics` file, or the Apple/Samsung-fallback buttons will silently disagree with the Google Calendar button.
-- Firebase Hosting is configured to serve `/calendar/**` with `Content-Type: text/calendar; charset=utf-8` (see `firebase.json`) — without that header, some devices treat the download as a generic file and won't offer to open it as a calendar event.
-- The Samsung Calendar button uses an `intent://` URL rather than a plain link. Chrome/Samsung Internet on Android parse that scheme specially to launch a native app intent; it does nothing useful on desktop or iOS, which is why it's Android-only by design. If you ever touch `buildSamsungCalendarUrl` in `app.ts`, be careful with the MIME type / data URI — it needs to target the calendar _events collection_ (`content://com.android.calendar/events`) for `ACTION_INSERT`, not a single-event view type, or every Android calendar app will fail to open it with an "Unable to launch event" error.
+---
 
-## Getting started
+## 📋 Prerequisites
+
+Before running this project, ensure you have the following installed:
+
+- Node.js `^22.22.3`, `^24.15.0` or `>=26` with npm
+- Firebase CLI (`npm install -g firebase-tools`), only if you want to deploy
+
+---
+
+## ⚙️ Local Setup & Running
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/FrunzaDan/wedding-invite-frz.git
+cd wedding-invite-frz
+```
+
+### 2. Configuration
+
+There's no config file. Names, the wedding date, venues, map links and phone numbers are fields in `src/app/app.ts`. If you fork this for another wedding, that's the file to edit.
+
+The `.ics` files in `public/calendar/` are written by hand. If you change an event's date or time in `app.ts`, update the matching `.ics` file too, or the Apple button will disagree with the Google one.
+
+### 3. Installation & Run
 
 ```bash
 npm install
-npm start        # ng serve — http://localhost:4200
+npm start          # dev server on http://localhost:4200
+npm test           # Vitest unit tests
+npm run build      # production build → dist/wedding-invite/browser
 ```
 
-The dev server live-reloads on changes to anything in `src/`.
+---
 
-## Testing
+## 🔌 API / App Usage
+
+To deploy (Firebase project in `.firebaserc`):
 
 ```bash
-npm test          # ng test — runs the Vitest suite once
+npm run build
+firebase deploy
 ```
 
-The suite (`src/app/app.spec.ts`) covers the countdown logic (including edge cases at the exact wedding moment and long after), the calendar link builders for all three platforms, and the rendered template (maps, phone numbers, RSVP text, etc.).
+`firebase.json` serves `/calendar/**` with `Content-Type: text/calendar; charset=utf-8`. Without that header, some phones download the `.ics` as a generic file instead of offering to add the event.
 
-## Building & deploying
+The Samsung button only works in Android browsers. If you change `buildSamsungCalendarUrl` in `app.ts`, keep it targeting the events collection (`content://com.android.calendar/events`) with `ACTION_INSERT`, otherwise Android calendar apps fail with "Unable to launch event".
 
-```bash
-npm run build      # outputs to dist/wedding-invite/browser
-firebase deploy    # ships that build to Firebase Hosting
-```
+---
 
-`ng build` alone won't deploy anything — you need the Firebase CLI configured against the project in `.firebaserc` and to run `firebase deploy` yourself (or however your deploy process is wired up).
+## 📝 License & Notes
+
+Personal project with no license file. All UI text is in Romanian.
+
+The unit tests in `src/app/app.spec.ts` cover the countdown (including the exact wedding moment and dates after it), the calendar link builders for all three platforms, and the rendered template.
