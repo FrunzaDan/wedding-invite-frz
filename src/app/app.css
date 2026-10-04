@@ -21,7 +21,11 @@
 
   --surface: rgba(255, 255, 255, 0.5);
   --surface-hover: rgba(255, 255, 255, 0.85);
-  --tint: linear-gradient(135deg, rgba(232, 205, 213, 0.3), rgba(232, 205, 213, 0.1));
+  --tint: linear-gradient(
+    135deg,
+    rgba(232, 205, 213, 0.3),
+    rgba(232, 205, 213, 0.1)
+  );
 
   --radius-sm: 16px;
   --radius-md: 24px;
@@ -43,7 +47,11 @@
   color: var(--ink);
   background:
     radial-gradient(circle at top, rgba(232, 205, 213, 0.95), transparent 40%),
-    radial-gradient(circle at 80% 100%, rgba(210, 185, 200, 0.6), transparent 50%),
+    radial-gradient(
+      circle at 80% 100%,
+      rgba(210, 185, 200, 0.6),
+      transparent 50%
+    ),
     linear-gradient(135deg, #faf6f4 0%, #f5ede8 35%, #ede1da 100%);
 }
 
@@ -99,7 +107,12 @@ img {
   transform: translateX(-50%);
   width: 60px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--line-strong),
+    transparent
+  );
 }
 
 /* ---------- Ornaments ---------- */
@@ -107,7 +120,12 @@ img {
 .divider {
   width: 140px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--line-strong),
+    transparent
+  );
   margin: var(--space-6) auto;
   position: relative;
 }
@@ -140,7 +158,12 @@ img {
 .divider-small {
   width: 60px;
   height: var(--line-width);
-  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--line-strong),
+    transparent
+  );
   margin: var(--space-4) auto;
 }
 
@@ -423,12 +446,20 @@ h1 {
 
 /* WhatsApp keeps its brand green as a quiet tint on the shared button shape. */
 .whatsapp-button {
-  background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(37, 211, 102, 0.04));
+  background: linear-gradient(
+    135deg,
+    rgba(37, 211, 102, 0.08),
+    rgba(37, 211, 102, 0.04)
+  );
   border-color: rgba(37, 211, 102, 0.25);
 }
 
 .whatsapp-button:hover {
-  background: linear-gradient(135deg, rgba(37, 211, 102, 0.15), rgba(37, 211, 102, 0.08));
+  background: linear-gradient(
+    135deg,
+    rgba(37, 211, 102, 0.15),
+    rgba(37, 211, 102, 0.08)
+  );
   border-color: rgba(37, 211, 102, 0.45);
   box-shadow: 0 8px 18px rgba(37, 211, 102, 0.12);
   transform: translateY(-2px);
@@ -454,7 +485,11 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(135deg, rgba(126, 86, 90, 0.1), rgba(126, 86, 90, 0.04));
+  background: linear-gradient(
+    135deg,
+    rgba(126, 86, 90, 0.1),
+    rgba(126, 86, 90, 0.04)
+  );
   border: var(--line-width) solid var(--line);
   border-radius: var(--radius-md);
   padding: var(--space-6) var(--space-5);

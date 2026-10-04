@@ -1,5 +1,11 @@
 import { DOCUMENT } from '@angular/common';
-import { afterNextRender, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+} from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
@@ -53,7 +59,10 @@ export class App {
     // Still ticks every second so the minute rolls over on time; unchanged values don't touch the DOM.
     afterNextRender(() => {
       this.countdown.set(this.computeCountdown());
-      countdownIntervalId = setInterval(() => this.countdown.set(this.computeCountdown()), 1_000);
+      countdownIntervalId = setInterval(
+        () => this.countdown.set(this.computeCountdown()),
+        1_000,
+      );
     });
     inject(DestroyRef).onDestroy(() => clearInterval(countdownIntervalId));
 
@@ -97,7 +106,10 @@ export class App {
       this.receptionIcsUrl,
     );
 
-    this.ceremonyMapEmbed = this.buildMapEmbed(this.ceremonyStreet, this.ceremonyLocation);
+    this.ceremonyMapEmbed = this.buildMapEmbed(
+      this.ceremonyStreet,
+      this.ceremonyLocation,
+    );
     this.receptionMapEmbed = this.buildMapEmbed(
       `${this.receptionVenue} ${this.receptionStreet}`,
       this.receptionLocation,
@@ -144,7 +156,9 @@ export class App {
   ): string {
     const beginTime = new Date(startIso).getTime();
     const endTime = new Date(endIso).getTime();
-    const fallbackUrl = encodeURIComponent(`${this.document.location.origin}${fallbackIcsUrl}`);
+    const fallbackUrl = encodeURIComponent(
+      `${this.document.location.origin}${fallbackIcsUrl}`,
+    );
 
     return (
       'intent://com.android.calendar/events#Intent;' +

@@ -30,7 +30,11 @@ describe('App', () => {
 
       fixture.detectChanges(); // runs the first render, which starts the countdown
 
-      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0 });
+      expect(component['countdown']()).toEqual({
+        days: 10,
+        hours: 0,
+        minutes: 0,
+      });
     });
 
     it('resets to zero once the wedding date has passed', () => {
@@ -39,7 +43,11 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0 });
+      expect(component['countdown']()).toEqual({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+      });
     });
 
     it('refreshes on the countdown interval', () => {
@@ -47,12 +55,20 @@ describe('App', () => {
       vi.setSystemTime(new Date('2027-09-01T00:00:00+03:00'));
 
       fixture.detectChanges();
-      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0 });
+      expect(component['countdown']()).toEqual({
+        days: 10,
+        hours: 0,
+        minutes: 0,
+      });
 
       vi.setSystemTime(new Date('2027-09-06T00:00:00+03:00'));
       vi.advanceTimersByTime(60_000);
 
-      expect(component['countdown']()).toEqual({ days: 4, hours: 23, minutes: 59 });
+      expect(component['countdown']()).toEqual({
+        days: 4,
+        hours: 23,
+        minutes: 59,
+      });
     });
 
     it('rolls the minutes over as soon as a minute boundary passes', () => {
@@ -60,10 +76,18 @@ describe('App', () => {
       vi.setSystemTime(new Date('2027-09-10T23:58:00+03:00'));
 
       fixture.detectChanges();
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 2 });
+      expect(component['countdown']()).toEqual({
+        days: 0,
+        hours: 0,
+        minutes: 2,
+      });
 
       vi.advanceTimersByTime(1_000);
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 1 });
+      expect(component['countdown']()).toEqual({
+        days: 0,
+        hours: 0,
+        minutes: 1,
+      });
     });
 
     it('re-renders the countdown when the interval refreshes it', () => {
@@ -73,7 +97,9 @@ describe('App', () => {
       fixture.detectChanges();
       const values = () =>
         Array.from(
-          (fixture.nativeElement as HTMLElement).querySelectorAll('.countdown-value'),
+          (fixture.nativeElement as HTMLElement).querySelectorAll(
+            '.countdown-value',
+          ),
           (el) => el.textContent?.trim(),
         );
       expect(values()).toEqual(['10', '0', '0']);
@@ -95,7 +121,11 @@ describe('App', () => {
       vi.setSystemTime(new Date('2027-09-06T00:00:00+03:00'));
       vi.advanceTimersByTime(120_000);
 
-      expect(component['countdown']()).toEqual({ days: 10, hours: 0, minutes: 0 });
+      expect(component['countdown']()).toEqual({
+        days: 10,
+        hours: 0,
+        minutes: 0,
+      });
     });
 
     it('shows all zeros at the exact moment the wedding starts', () => {
@@ -104,7 +134,11 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0 });
+      expect(component['countdown']()).toEqual({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+      });
     });
 
     it('shows the minutes left when less than an hour remains', () => {
@@ -113,7 +147,11 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 30 });
+      expect(component['countdown']()).toEqual({
+        days: 0,
+        hours: 0,
+        minutes: 30,
+      });
     });
 
     it('never reports a negative countdown long after the wedding has passed', () => {
@@ -122,7 +160,11 @@ describe('App', () => {
 
       fixture.detectChanges();
 
-      expect(component['countdown']()).toEqual({ days: 0, hours: 0, minutes: 0 });
+      expect(component['countdown']()).toEqual({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+      });
     });
   });
 
@@ -135,45 +177,71 @@ describe('App', () => {
     it('builds a Google Calendar link for the ceremony with the correct UTC dates and details', () => {
       const url = new URL(component['ceremonyGoogleCalendarUrl']);
 
-      expect(url.origin + url.pathname).toBe('https://calendar.google.com/calendar/render');
+      expect(url.origin + url.pathname).toBe(
+        'https://calendar.google.com/calendar/render',
+      );
       expect(url.searchParams.get('action')).toBe('TEMPLATE');
-      expect(url.searchParams.get('text')).toBe('Nuntă Dan & Maria - Ceremonie');
-      expect(url.searchParams.get('dates')).toBe('20270911T100000Z/20270911T110000Z');
+      expect(url.searchParams.get('text')).toBe(
+        'Nuntă Dan & Maria - Ceremonie',
+      );
+      expect(url.searchParams.get('dates')).toBe(
+        '20270911T100000Z/20270911T110000Z',
+      );
       expect(url.searchParams.get('location')).toBe(
         'Biserica Ursulinelor, Str. General Magheru 36, Sibiu',
       );
-      expect(url.searchParams.get('details')).toBe('Ceremonia religioasă a nunții Dan & Maria.');
+      expect(url.searchParams.get('details')).toBe(
+        'Ceremonia religioasă a nunții Dan & Maria.',
+      );
     });
 
     it('builds a Google Calendar link for the reception with the correct UTC dates and details', () => {
       const url = new URL(component['receptionGoogleCalendarUrl']);
 
       expect(url.searchParams.get('text')).toBe('Nuntă Dan & Maria - Recepție');
-      expect(url.searchParams.get('dates')).toBe('20270911T120000Z/20270911T200000Z');
-      expect(url.searchParams.get('location')).toBe('Ramada Sibiu, Str. Emil Cioran 2, Sibiu');
-      expect(url.searchParams.get('details')).toBe('Recepția nunții Dan & Maria.');
+      expect(url.searchParams.get('dates')).toBe(
+        '20270911T120000Z/20270911T200000Z',
+      );
+      expect(url.searchParams.get('location')).toBe(
+        'Ramada Sibiu, Str. Emil Cioran 2, Sibiu',
+      );
+      expect(url.searchParams.get('details')).toBe(
+        'Recepția nunții Dan & Maria.',
+      );
     });
 
     it('builds a Samsung Calendar intent link for the ceremony with the correct epoch times and details', () => {
       const href = component['ceremonySamsungCalendarUrl'];
 
-      expect(href).toContain(`S.title=${encodeURIComponent('Nuntă Dan & Maria - Ceremonie')}`);
+      expect(href).toContain(
+        `S.title=${encodeURIComponent('Nuntă Dan & Maria - Ceremonie')}`,
+      );
       expect(href).toContain(
         `S.eventLocation=${encodeURIComponent('Biserica Ursulinelor, Str. General Magheru 36, Sibiu')}`,
       );
       expect(href).toContain(
         `S.description=${encodeURIComponent('Ceremonia religioasă a nunții Dan & Maria.')}`,
       );
-      expect(href).toContain(`l.beginTime=${new Date('2027-09-11T13:00:00+03:00').getTime()}`);
-      expect(href).toContain(`l.endTime=${new Date('2027-09-11T14:00:00+03:00').getTime()}`);
+      expect(href).toContain(
+        `l.beginTime=${new Date('2027-09-11T13:00:00+03:00').getTime()}`,
+      );
+      expect(href).toContain(
+        `l.endTime=${new Date('2027-09-11T14:00:00+03:00').getTime()}`,
+      );
     });
 
     it('builds a Samsung Calendar intent link for the reception with the correct epoch times and details', () => {
       const href = component['receptionSamsungCalendarUrl'];
 
-      expect(href).toContain(`S.title=${encodeURIComponent('Nuntă Dan & Maria - Recepție')}`);
-      expect(href).toContain(`l.beginTime=${new Date('2027-09-11T15:00:00+03:00').getTime()}`);
-      expect(href).toContain(`l.endTime=${new Date('2027-09-11T23:00:00+03:00').getTime()}`);
+      expect(href).toContain(
+        `S.title=${encodeURIComponent('Nuntă Dan & Maria - Recepție')}`,
+      );
+      expect(href).toContain(
+        `l.beginTime=${new Date('2027-09-11T15:00:00+03:00').getTime()}`,
+      );
+      expect(href).toContain(
+        `l.endTime=${new Date('2027-09-11T23:00:00+03:00').getTime()}`,
+      );
     });
 
     it('targets the Android Calendar Provider "insert new event" data URI, not a single-event view', () => {
@@ -221,14 +289,18 @@ describe('App', () => {
       const url = unwrapSafeUrl(component['ceremonyMapEmbed']);
 
       expect(url).toContain('https://www.google.com/maps?q=');
-      expect(url).toContain(encodeURIComponent('Str. General Magheru 36 Sibiu'));
+      expect(url).toContain(
+        encodeURIComponent('Str. General Magheru 36 Sibiu'),
+      );
       expect(url).toContain('&output=embed');
     });
 
     it('builds a sanitized Google Maps embed URL for the reception venue', () => {
       const url = unwrapSafeUrl(component['receptionMapEmbed']);
 
-      expect(url).toContain(encodeURIComponent('Ramada Sibiu Str. Emil Cioran 2 Sibiu'));
+      expect(url).toContain(
+        encodeURIComponent('Ramada Sibiu Str. Emil Cioran 2 Sibiu'),
+      );
     });
   });
 
@@ -239,16 +311,18 @@ describe('App', () => {
 
     it('renders the wedding date and countdown labels', () => {
       const compiled: HTMLElement = fixture.nativeElement;
-      expect(compiled.querySelector('h1')?.textContent).toContain('Dan & Maria');
+      expect(compiled.querySelector('h1')?.textContent).toContain(
+        'Dan & Maria',
+      );
       expect(compiled.textContent).toContain(component['date']);
     });
 
     it('marks up the section labels as a heading outline for screen readers', () => {
       const compiled: HTMLElement = fixture.nativeElement;
-      const headings = Array.from(compiled.querySelectorAll('h1, h2, h3'), (el) => [
-        el.tagName,
-        el.textContent?.trim(),
-      ]);
+      const headings = Array.from(
+        compiled.querySelectorAll('h1, h2, h3'),
+        (el) => [el.tagName, el.textContent?.trim()],
+      );
 
       expect(headings).toEqual([
         ['H1', 'Dan & Maria'],
@@ -272,7 +346,9 @@ describe('App', () => {
 
     it('renders tel: links for both phone numbers', () => {
       const compiled: HTMLElement = fixture.nativeElement;
-      const links = Array.from(compiled.querySelectorAll('a.phone-button')) as HTMLAnchorElement[];
+      const links = Array.from(
+        compiled.querySelectorAll('a.phone-button'),
+      ) as HTMLAnchorElement[];
 
       expect(links.map((link) => link.getAttribute('href'))).toEqual([
         `tel:${component['danPhone']}`,
@@ -316,7 +392,9 @@ describe('App', () => {
 
       expect(googleLinks).toHaveLength(2);
       for (const link of googleLinks) {
-        expect(link.getAttribute('href')).toContain('https://calendar.google.com/calendar/render');
+        expect(link.getAttribute('href')).toContain(
+          'https://calendar.google.com/calendar/render',
+        );
         expect(link.getAttribute('target')).toBe('_blank');
       }
     });
@@ -331,7 +409,9 @@ describe('App', () => {
       for (const link of samsungLinks) {
         const href = link.getAttribute('href') ?? '';
         expect(
-          href.startsWith('intent://com.android.calendar/events#Intent;scheme=content;'),
+          href.startsWith(
+            'intent://com.android.calendar/events#Intent;scheme=content;',
+          ),
         ).toBe(true);
         expect(href).toContain('package=com.samsung.android.calendar');
         expect(link.getAttribute('target')).toBeNull();
@@ -347,7 +427,9 @@ describe('App', () => {
 
     it('renders the hero image with a descriptive alt text', () => {
       const compiled: HTMLElement = fixture.nativeElement;
-      const img = compiled.querySelector('.image-wrap img') as HTMLImageElement | null;
+      const img = compiled.querySelector(
+        '.image-wrap img',
+      ) as HTMLImageElement | null;
 
       expect(img).not.toBeNull();
       expect(img?.getAttribute('src')).toBe(component['imagePath']);
@@ -356,7 +438,9 @@ describe('App', () => {
 
     it('renders "Open in Maps" links to the ceremony and reception map URLs in a new tab', () => {
       const compiled: HTMLElement = fixture.nativeElement;
-      const mapLinks = Array.from(compiled.querySelectorAll('a.map-link')) as HTMLAnchorElement[];
+      const mapLinks = Array.from(
+        compiled.querySelectorAll('a.map-link'),
+      ) as HTMLAnchorElement[];
 
       expect(mapLinks.map((link) => link.getAttribute('href'))).toEqual([
         component['ceremonyMap'],
@@ -370,7 +454,9 @@ describe('App', () => {
 
     it('renders the sanitized map embed URLs on the ceremony and reception iframes', () => {
       const compiled: HTMLElement = fixture.nativeElement;
-      const iframes = Array.from(compiled.querySelectorAll('.map-frame iframe')) as HTMLIFrameElement[];
+      const iframes = Array.from(
+        compiled.querySelectorAll('.map-frame iframe'),
+      ) as HTMLIFrameElement[];
 
       expect(iframes).toHaveLength(2);
       expect(iframes[0].getAttribute('src')).toContain(
