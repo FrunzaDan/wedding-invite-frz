@@ -59,7 +59,7 @@ Or run the npm scripts yourself:
 
 ```bash
 npm install
-npm start          # dev server on http://localhost:4200
+npm start          # dev server on http://localhost:4209
 npm test           # Vitest unit tests
 npm run build      # production build → dist/wedding-invite/browser
 ```
