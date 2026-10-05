@@ -6,7 +6,7 @@ Wedding Invite is a single-page digital invitation for Dan & Maria's wedding. Gu
 
 ## Key Features
 
-- **Countdown:** Shows the days and hours left until the wedding, refreshed every minute. It stops cleanly at zero once the day has arrived instead of counting into negative numbers.
+- **Countdown:** Shows the days, hours and minutes left until the wedding (11 September 2027, Romanian time). It is recalculated every second so the minute rolls over on time, runs only in the browser, and stops at zero once the day has arrived instead of counting into negative numbers.
 - **Event details with maps:** The ceremony and the reception each have a time, venue and address. Each one also has an embedded Google Map and a link that opens the location in the Maps app.
 - **Add to calendar:** Each event has three buttons. Google opens a prefilled Google Calendar event, Samsung uses an Android `intent://` link to open the phone's native "new event" screen, and Apple downloads a static `.ics` file, which is also the fallback for the Samsung button.
 - **RSVP:** Tap-to-call and WhatsApp buttons for both Dan and Maria, so guests can answer with one tap from their phone.
@@ -18,7 +18,7 @@ Wedding Invite is a single-page digital invitation for Dan & Maria's wedding. Gu
 - **Frontend:** Angular 22.2 (standalone, zoneless), TypeScript, plain CSS. The whole UI is `src/app/app.ts` / `app.html` / `app.css`
 - **Backend:** N/A
 - **Database / Storage:** N/A
-- **Tooling & Other:** Vitest + jsdom, Prettier, Firebase Hosting
+- **Tooling & Other:** Vitest + jsdom, ESLint (angular-eslint), Prettier, Firebase Hosting
 
 ---
 
@@ -42,7 +42,7 @@ cd wedding-invite-frz
 
 ### 2. Configuration
 
-There's no config file. Names, the wedding date, venues, map links and phone numbers are fields in `src/app/app.ts`. If you fork this for another wedding, that's the file to edit.
+There's no config file. Names, venues, map links, phone numbers and the event start/end times (`ceremonyStartIso` and so on) are fields in `src/app/app.ts`. The countdown's target date is hardcoded in `computeCountdown()` in the same file. If you fork this for another wedding, that's the file to edit, and the tests in `app.spec.ts` pin the current dates, so update them too.
 
 The `.ics` files in `public/calendar/` are written by hand. If you change an event's date or time in `app.ts`, update the matching `.ics` file too, or the Apple button will disagree with the Google one.
 
@@ -61,6 +61,8 @@ Or run the npm scripts yourself:
 npm install
 npm start          # dev server on http://localhost:4209
 npm test           # Vitest unit tests
+npm run lint       # ESLint
+npm run format     # Prettier, fixes formatting in place (format:check only reports)
 npm run build      # production build → dist/wedding-invite/browser
 ```
 
